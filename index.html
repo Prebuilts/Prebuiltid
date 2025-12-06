@@ -3,22 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Viiru | Home</title>
+  <title>Prebuiltid | Kodu</title>
   <link rel="icon" type="image/x-icon" href="/Images/favicon.ico" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <!-- Header -->
   <header id="header">
-    <img src="Images/Viiru.png" alt="Viiru Logo" id="HIcon" />
-    <h1 id="HH1">Viiru</h1>
+    <img src="Images/Image.png" alt="Prebuiltid Logo" id="HIcon" />
+    <h1 id="HH1">Prebuiltid</h1>
     <nav>
       <ul>
-        <li><a href="https://www.viiru.top/" class="active">Home</a></li>
-        <li><a href="https://www.viiru.top/Store">Store</a></li>
-        <li><a href="https://www.viiru.top/Tools/tools">Tools</a></li>
-        <li><a href="https://www.viiru.top/Socials">Socials</a></li>
-        <li><a href="https://www.viiru.top/about">About</a></li>
+        <li><a href="https://www.viiru.top/" class="active">Kodu</a></li>
+        <li><a href="https://www.viiru.top/Store">Pood</a></li>
+        <li><a href="https://www.viiru.top/Socials">Sotsiaalmeediad</a></li>
+        <li><a href="https://www.viiru.top/about">Meist</a></li>
         <li id="authLinks">
           <!-- Will be replaced by JS with Login/Logout -->
         </li>
@@ -29,42 +28,42 @@
 
   <!-- Intro Section -->
   <section id="intro">
-    <h2>About the site</h2>
-    <p>Text coming soon</p>
+    <h2>Lehest</h2>
+    <p>Tekst on tulemas</p>
   </section>
 
   <!-- Article Section -->
   <section class="article-section">
-    <h2>Article - NEW ONLINE TOOLS!</h2>
+    <h2>Artikkel</h2>
     <div class="article-content">
       <img src="Images/IMAGE" alt="Image Preview" class="article-thumb">
-      <p>New handy tools out that you can use to make your life easier! Download time calculator, discount calculator and EVEN MORE!</p>
-      <a href="https://viiru.top/Tools/tools" class="see-more-btn">See all tools</a>
+      <p>Tekst</p>
+      <a href="https://www.example.com/" class="see-more-btn">Loe lähemalt</a>
     </div>
   </section>
 
   <!-- Recommended Products -->
   <section class="recommended-products">
-    <h2>I recommend these products</h2>
+    <h2>Meie soovitame neid tooteid</h2>
     <div class="recommended-grid" id="product-list">
       <!-- Products will load here from JSON -->
     </div>
     <div class="see-more-container">
-      <a href="https://www.viiru.top/Store" class="see-more-btn">Read more</a>
+      <a href="https://www.example.com/Pood" class="see-more-btn">Loe lähemalt</a>
     </div>
   </section>
 
   <!-- Website version -->
   <section class="textsection">
     <h2>Website version</h2>
-    <p>Website version: 1.1.0</p>
+    <p>Veebilehe versioon: 1.1.0</p>
   </section>
 
   <!-- Footer -->
   <footer id="footer">
-    <p>Copyright &copy; viiru.top 2025</p>
-    <a href="https://www.viiru.top/privacypolicy">Privacy Policy</a>
-    <a href="https://www.viiru.top/tos">Terms of Service</a>
+    <p>Kõik õigused kaitstud &copy; Prebuiltid 2025</p>
+    <a href="https://www.example.com/privacypolicy">Privaatsus</a>
+    <a href="https://www.example.com/tos">Kasutustingimused</a>
   </footer>
 
   <!-- Dark Mode Script -->
@@ -86,11 +85,11 @@
 
     const firebaseConfig = {
       apiKey: "AIzaSyBVJgqD79MXrKbU2okML4wzlMym7yaLxio",
-      authDomain: "v11rutop.firebaseapp.com",
-      projectId: "v11rutop",
-      storageBucket: "v11rutop.firebasestorage.app",
-      messagingSenderId: "664984661004",
-      appId: "1:664984661004:web:357ea8a60723b000e55229",
+      authDomain: "x.firebaseapp.com",
+      projectId: "x",
+      storageBucket: "x.firebasestorage.app",
+      messagingSenderId: "x",
+      appId: "x",
       measurementId: "G-DMPEGNPVEN"
     };
 
@@ -102,8 +101,8 @@
     onAuthStateChanged(auth, (user) => {
       if (user) {
         authLinks.innerHTML = `
-          <span style="color:#93c5fd;">Hi, ${user.email}</span>
-          <button id="logoutBtn" class="see-more-btn" style="margin-left:10px;">Logout</button>
+          <span style="color:#93c5fd;">Tere, ${user.email}</span>
+          <button id="logoutBtn" class="see-more-btn" style="margin-left:10px;">Logi välja</button>
         `;
         document.getElementById("logoutBtn").addEventListener("click", () => {
           signOut(auth).then(() => {
@@ -111,7 +110,7 @@
           });
         });
       } else {
-        authLinks.innerHTML = `<a href="login.html">Login</a>`;
+        authLinks.innerHTML = `<a href="login.html">Logi sisse</a>`;
       }
     });
   </script>
