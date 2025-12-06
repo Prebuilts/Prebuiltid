@@ -20,7 +20,7 @@ function displayProducts(products) {
                 <h3>${product.name}</h3>
                 <h3>${product.price}</h3>
                 <p>${product.description}</p>
-                <button onclick="alert('Buying ${product.name}')">Buy Now</button>
+                <button onclick="alert('Buying ${product.name}')">Osta kohe</button>
             </div>
         `;
         productContainer.innerHTML += productHTML;
