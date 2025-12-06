@@ -5,5 +5,12 @@
         "description": "Osta seda meie Kuldse börsi lehelt",
         "image": "https://www.kuldnebors.ee/search/arvutid/lauaarvutid/manguriarvuti/search.mec?pob_post_id=96978368&pob_action=show_post_images&pob_cat_id=10936&pob_image_id=de681649f5810959fa2408bc1ee12891&pob_browser_offset=0&pob_view_language_id=et&pob_link_type=mypost&search_X_cat_ids=10682#de681649f5810959fa2408bc1ee12891.jpg",
         "category": "gaming-pcs"
+    },
+    {
+        "name": "Xbox 360",
+        "price": "109.99€",
+        "description": "Osta seda meie Kuldse börsi lehelt",
+        "image": "https://kb2.img-bcg.eu/kuldne-image/ad/675/506/c6ac41b8abc3a2250ee987e0d2b164f8.jpg?crop=0&watermark=1&format=jpeg",
+        "category": "consoles"
     }
 ]
