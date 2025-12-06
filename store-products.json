@@ -1,9 +1,9 @@
 [
     {
-        "name": "Product 1",
-        "price": "Price",
-        "description": "Desc",
-        "image": "https://www.viiru.top/Images/Viiru.png",
-        "category": "games"
+        "name": "Mänguriarvuti",
+        "price": "399.99€",
+        "description": "Osta seda meie Kuldse börsi lehelt",
+        "image": "https://www.kuldnebors.ee/search/arvutid/lauaarvutid/manguriarvuti/search.mec?pob_post_id=96978368&pob_action=show_post_images&pob_cat_id=10936&pob_image_id=de681649f5810959fa2408bc1ee12891&pob_browser_offset=0&pob_view_language_id=et&pob_link_type=mypost&search_X_cat_ids=10682#de681649f5810959fa2408bc1ee12891.jpg",
+        "category": "gaming-pcs"
     }
 ]
