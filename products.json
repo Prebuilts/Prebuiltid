@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Product 1",
+    "price": "Price",
+    "description": "Desc",
+    "image": "https://www.viiru.top/Images/Viiru.png"
+  },
+  {
+    "name": "Product 2",
+    "price": "Price",
+    "description": "Desc",
+    "image": "https://www.viiru.top/Images/Viiru.png"
+  },
+  {
+    "name": "Product 3",
+    "price": "Price",
+    "description": "Desc",
+    "image": "https://www.viiru.top/Images/Viiru.png"
+  },
+  {
+    "name": "Product 4",
+    "price": "Price",
+    "description": "Desc",
+    "image": "https://www.viiru.top/Images/Viiru.png"
+  }
+]

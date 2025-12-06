@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login | Viiru</title>
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header id="header">
+    <img src="Images/Viiru.png" alt="Viiru Logo" id="HIcon" />
+    <h1 id="HH1">Viiru</h1>
+  </header>
+
+  <!-- Login Box -->
+  <section class="login-section">
+    <h2>Login</h2>
+
+    <button id="googleLogin">Login with Google</button>
+
+    <h3 style="margin-top:20px;">Or use Email</h3>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+
+    <button id="emailLogin">Login with Email</button>
+    <button id="signup" style="background-color:#22c55e;">Sign Up</button>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer">
+    <p>Copyright &copy; viiru.top 2025</p>
+  </footer>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBVJgqD79MXrKbU2okML4wzlMym7yaLxio",
+      authDomain: "v11rutop.firebaseapp.com",
+      projectId: "v11rutop",
+      storageBucket: "v11rutop.firebasestorage.app",
+      messagingSenderId: "664984661004",
+      appId: "1:664984661004:web:357ea8a60723b000e55229",
+      measurementId: "G-DMPEGNPVEN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // Google login
+    document.getElementById("googleLogin").addEventListener("click", () => {
+      signInWithPopup(auth, provider)
+        .then(() => window.location.href = "index.html")
+        .catch(err => alert(err.message));
+    });
+
+    // Email login
+    document.getElementById("emailLogin").addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => window.location.href = "index.html")
+        .catch(err => alert(err.message));
+    });
+
+    // Signup
+    document.getElementById("signup").addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => window.location.href = "index.html")
+        .catch(err => alert(err.message));
+    });
+  </script>
+</body>
+</html>
+

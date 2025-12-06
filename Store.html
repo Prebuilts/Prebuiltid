@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/x-icon" href="/Images/favicon.ico">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Viiru | Store</title>
+    <link rel="stylesheet" href="store.css" />
+</head>
+<body>
+
+<header id="header">
+    <img src="Images/Viiru.png" alt="Viiru Logo" id="HIcon" />
+    <h1 id="HH1">Viiru</h1>
+    <nav>
+        <ul>
+            <li><a href="https://www.viiru.top/">Home</a></li>
+            <li><a href="https://www.viiru.top/Store" class="active">Store</a></li>
+            <li><a href="https://www.viiru.top/Socials">Socials</a></li>
+            <li><a href="https://www.viiru.top/about">About</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="store-section">
+    <h2>Our Store</h2>
+    
+    <!-- Category Dropdown -->
+    <div class="category-filter">
+        <label for="categorySelect">Filter by category:</label>
+        <select id="categorySelect">
+            <option value="all">All</option>
+            <option value="games">Games</option>
+            <option value="electronics">Electronics</option>
+            <option value="books">Books</option>
+        </select>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="recommended-grid" id="store-product-list">
+        <!-- Products will load here from JSON -->
+    </div>
+</section>
+
+<footer id="footer">
+    <p>Copyright &copy; viiru.top 2025</p>
+    <a href="https://www.viiru.top/privacypolicy">Privacy Policy</a>
+    <a href="https://www.viiru.top/tos">Terms of Service</a>
+</footer>
+
+<script src="store.js"></script>
+</body>
+</html>

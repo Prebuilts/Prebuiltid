@@ -1,0 +1,133 @@
+/* style.css */
+body {
+    background-color: lavender;
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+#header {
+    padding: 20px;
+    background-color: dimgray;
+    border: 9px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+#HIcon {
+    max-width: 75px;
+    margin-right: 10px;
+}
+#HH1 {
+    color: rgb(124, 176, 243);
+    margin: 0;
+    font-size: 2rem;
+    flex-grow: 1;
+}
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background-color: #333;
+    border-radius: 5px;
+}
+nav li {
+    margin: 0;
+}
+nav li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+    font-weight: bold;
+}
+nav li a:hover, nav li a.active {
+    background-color: #111;
+}
+section {
+    margin: 25px 10px;
+    padding: 20px;
+    background-color: cornsilk;
+    border: 7px solid dimgray;
+    border-radius: 10px;
+}
+#intro {
+    padding-bottom: 50px;
+    font-size: 1.2rem;
+    color: black;
+    text-align: center;
+}
+#socials {
+    text-align: center;
+}
+#socials ul {
+    list-style-type: none;
+    padding: 0;
+    display: inline-flex;
+    gap: 20px;
+}
+#socials ul li a {
+    text-decoration: none;
+    color: rgb(105, 105, 105);
+    font-weight: bold;
+}
+#socials ul li a:hover {
+    text-decoration: underline;
+}
+#footer {
+    padding: 20px;
+    background-color: dimgray;
+    border: 7px solid black;
+    color: rgb(124, 176, 243);
+    text-align: center;
+    margin: 10px;
+    border-radius: 10px;
+}
+.text-content {
+  max-width: 900px;
+  padding: 30px;
+  background-color: white;
+  color: #222;
+  font-family: sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.text-content a {
+  color: rgb(124, 176, 243);
+  text-decoration: underline;
+}
+#shopgrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 per row */
+  gap: 30px;
+  padding: 40px;
+  max-width: 1200px;
+  margin: auto;
+}
+.textsection {
+    padding-bottom: 50px;
+    font-size: 1.2rem;
+    color: black;
+    text-align: center;
+}
+.productbox {
+  background: #fff;
+  border: 1px solid #ddd; /* Clear border for separation */
+  border-radius: 10px;
+  text-align: center;
+  padding: 20px;
+  transition: box-shadow 0.3s;
+}
+#productimage {
+  width: 75px;
+  height: 75px;
+  
+  padding: 10px;
+  vertical-align: middle;
+}
+
+
+
+

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Links</title>
+  <link rel="stylesheet" href="social.css">
+</head>
+<body>
+  <!-- HEADER -->
+  <header id="header">
+    <img id="HIcon" src="Images/Viiru.png" alt="Logo">
+    <h1 id="HH1">Viiru</h1>
+    <nav>
+      <ul>
+        <li><a href="https://www.viiru.top/">Home</a></li>
+        <li><a href="https://www.viiru.top/Store">Store</a></li>
+        <li><a href="https://www.viiru.top/Socials" class="active">Socials</a></li>
+      </ul>
+    </nav>
+    <button id="darkModeToggle">🌙</button>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <section class="social-section">
+    <h2>Follow Us</h2>
+    <p>Stay connected with me on our social platforms!</p>
+
+    <div class="social-links">
+      <a href="https://twitter.com/callmeviiru" target="_blank" class="social-btn twitter">Twitter</a>
+      <a href="https://twitch.tv/callmeviiru" target="_blank" class="social-btn facebook">Twitch</a>
+      <a href="https://viiru.top/" target="_blank" class="social-btn instagram">Official website</a>
+      <a href="https://youtube.com/@ViiruTech" target="_blank" class="social-btn youtube">YouTube</a>
+      <a href="https://dsc.gg/viir" target="_blank" class="social-btn discord">Discord</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <p>© 2025 viiru.top</p>
+    <p>
+      <a href="privacy.html">Privacy Policy</a> | 
+      <a href="terms.html">Terms of Service</a>
+    </p>
+  </footer>
+
+  <script>
+    // === Dark Mode Toggle ===
+    const toggle = document.getElementById("darkModeToggle");
+    toggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+  </script>
+</body>
+</html>

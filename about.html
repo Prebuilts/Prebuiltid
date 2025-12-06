@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>About | CallMeViiru's Site</title>
+  
+  <!-- ✅ Link to your single CSS file -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Your Google Ads script stays here -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9235877052315560"
+   crossorigin="anonymous"></script>
+</head>
+<body>
+  <!-- ✅ Use id="header" to match your CSS -->
+  <header id="header">
+    <img src="Images/Viiru.png" id="HIcon" alt="Viiru Logo" />
+    <h1 id="HH1">CallMeViiru's Site</h1>
+
+  	<nav>
+    <ul>
+      <li><a href="https://www.viiru.top/">Home</a></li>
+      <li><a href="https://www.viiru.top/Store">Store</a></li>
+      <li><a href="https://www.viiru.top/Socials">Socials</a></li>
+      <li><a class="active" href="https://www.viiru.top/about">About</a></li>
+    </ul>
+  </nav>
+    
+    <!-- ✅ Dark mode toggle button -->
+    <button id="darkModeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+  </header>
+
+  <section>
+    <h1>IMPORTANT INFO ABOUT THE WEBSITE</h1>
+  </section>
+
+  <section>
+    <p><strong>viiru.ee</strong> and <strong>viiru.top</strong> ARE THE ONLY OFFICIAL WEBSITES made by CallMeViiru!</p>
+    <p>If any other website claims to be made by CallMeViiru, do <strong>NOT</strong> click on the links.</p>
+    <p>We do <strong>NOT</strong> ask for any personal information including (but not limited to):</p>
+    <ul style="text-align: center; list-style: none; padding: 0; font-weight: bold;">
+      <li>Passwords</li>
+      <li>Verification codes</li>
+      <li>Phone numbers</li>
+    </ul>
+    <p>If someone asks for this information, <strong>block them immediately</strong> and do not send anything.</p>
+  </section>
+
+  <footer id="footer">
+    <h3>&copy; 2025 viiru.top & viiru.ee</h3>
+    <a href="https://www.viiru.top/privacypolicy">Privacy Policy</a> |
+    <a href="https://www.viiru.top/tos">Terms Of Service</a>
+  </footer>
+
+  <!-- ✅ Dark mode toggle script at the end -->
+  <script>
+  const toggleButton = document.getElementById('darkModeToggle');
+
+  toggleButton.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+
+    // Switch icons based on mode
+    if (document.body.classList.contains('dark-mode')) {
+      toggleButton.textContent = '☀️'; // Sun icon when dark mode is ON
+    } else {
+      toggleButton.textContent = '🌙'; // Moon icon when dark mode is OFF
+    }
+  });
+</script>
+
+</body>
+</html>
