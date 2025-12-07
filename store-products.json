@@ -38,5 +38,13 @@
         "image": "https://kb2.img-bcg.eu/kuldne-image/ad/675/506/d4561b025debc3fe5441f6c33ec786bb.png?crop=0&watermark=1&format=jpeg",
         "category": "controllers",
         "link": "https://www.kuldnebors.ee/96978498"
+    },
+    {
+        "name": "Monitor",
+        "price": "120€",
+        "description": "1080p, 60hz",
+        "image": "https://kb2.img-bcg.eu/kuldne-image/ad/675/506/f07f3901043c909a241aa5a592687af7.jpg?crop=0&watermark=1&format=jpeg",
+        "category": "monitors",
+        "link": "https://www.kuldnebors.ee/96971795"
     }
 ]
