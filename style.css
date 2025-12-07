@@ -1,7 +1,7 @@
 /* === GLOBAL BODY === */
 body {
   font-family: Arial, sans-serif;
-  background-color: #f7f9fc;
+  background-color: #ABD2FA;
   color: #333;
   margin: 0;
   padding: 0;
@@ -11,7 +11,7 @@ section, .textsection {
   max-width: 1000px;
   margin: 40px auto;
   padding: 30px;
-  background-color: #ffffff;
+  background-color: #7692FF;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
@@ -32,7 +32,7 @@ p {
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 15px 30px;
-  background-color: #1e293b;
+  background-color: #091540;
   border-bottom: 5px solid #0f172a;
 }
 
@@ -202,7 +202,7 @@ nav li a.active {
 /* === FOOTER === */
 #footer {
   text-align: center;
-  background-color: #1e293b;
+  background-color: #091540;
   color: #93c5fd;
   padding: 20px;
   margin: 40px 20px 20px;
