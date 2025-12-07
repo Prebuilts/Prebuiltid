@@ -11,12 +11,12 @@ import {
 
 // Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyBVJgqD79MXrKbU2okML4wzlMym7yaLxio",
-  authDomain: "v11rutop.firebaseapp.com",
-  projectId: "v11rutop",
-  storageBucket: "v11rutop.firebasestorage.app",
-  messagingSenderId: "664984661004",
-  appId: "1:664984661004:web:357ea8a60723b000e55229",
+  apiKey: "x",
+  authDomain: "x.firebaseapp.com",
+  projectId: "x",
+  storageBucket: "x.firebasestorage.app",
+  messagingSenderId: "x",
+  appId: "x",
   measurementId: "G-DMPEGNPVEN"
 };
 
@@ -46,7 +46,7 @@ emailLoginBtn.addEventListener("click", async () => {
   const password = document.getElementById("password").value;
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    window.location.href = "https://www.viiru.top/"; // Redirect after login
+    window.location.href = "https://prebuiltid.github.io/Prebuiltid/"; // Redirect after login
   } catch (error) {
     alert(error.message);
   }
@@ -58,7 +58,7 @@ emailRegisterBtn.addEventListener("click", async () => {
   const password = document.getElementById("password").value;
   try {
     await createUserWithEmailAndPassword(auth, email, password);
-    alert("Account created! You can now login.");
+    alert("Konto loodud! Nüüd saad sisse logida!");
   } catch (error) {
     alert(error.message);
   }
