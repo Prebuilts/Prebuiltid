@@ -1,7 +1,7 @@
 /* === GLOBAL BODY === */
 body {
   font-family: Arial, sans-serif;
-  background-color: #E5F1FF; /* Soft light blue */
+  background-color: #F4F4F9; /* Soft light grayish off-white */
   color: #333;
   margin: 0;
   padding: 0;
@@ -11,13 +11,13 @@ section, .textsection {
   max-width: 1000px;
   margin: 40px auto;
   padding: 30px;
-  background-color: #A6C8FF; /* Softer light blue */
+  background-color: #F1F3F5; /* Light gray with a touch of warmth */
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 h1, h2 {
-  color: #1C1F2B; /* Darker, rich charcoal */
+  color: #1A1A1A; /* Rich dark charcoal */
   margin: 0;
 }
 
@@ -32,8 +32,8 @@ p {
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 15px 30px;
-  background-color: #253B56; /* Deep blue-gray */
-  border-bottom: 5px solid #1D2A40;
+  background-color: #2C3E50; /* Deep slate gray */
+  border-bottom: 5px solid #34495E; /* Slightly lighter slate gray */
 }
 
 #HIcon {
@@ -44,7 +44,7 @@ p {
 
 #HH1 {
   display: inline-block;
-  color: #B4D9FF; /* Light pastel blue */
+  color: #D1D8E0; /* Soft light gray */
   font-size: 1.6rem;
   margin: 0;
 }
@@ -63,7 +63,7 @@ nav ul {
 }
 
 nav li a {
-  color: #F1F6FC; /* Soft white */
+  color: #E2E8F0; /* Very light gray */
   text-decoration: none;
   font-weight: bold;
   border-radius: 5px;
@@ -73,20 +73,20 @@ nav li a {
 
 nav li a:hover,
 nav li a.active {
-  background-color: #1D2A40; /* Dark blue-gray */
+  background-color: #34495E; /* Darker slate gray */
 }
 
 #darkModeToggle {
   background: transparent;
   border: none;
-  color: #A9C9F4; /* Soft pastel blue */
+  color: #BDC3C7; /* Light metallic gray */
   font-size: 1.5rem;
   cursor: pointer;
   margin-left: 15px;
 }
 
 #darkModeToggle:hover {
-  color: #6C9CFF; /* Bright pastel blue */
+  color: #95A5A6; /* Soft muted silver */
 }
 
 /* === HEADER FLEX FIX === */
@@ -141,7 +141,7 @@ nav li a.active {
 }
 
 .see-more-btn {
-  background-color: #4D89F7; /* Soft sky blue */
+  background-color: #FF6F61; /* Soft coral */
   color: #FFF;
   text-decoration: none;
   padding: 10px 20px;
@@ -149,7 +149,7 @@ nav li a.active {
 }
 
 .see-more-btn:hover {
-  background-color: #357BEE; /* Slightly deeper blue */
+  background-color: #FF5733; /* Deeper coral */
 }
 
 /* === STORE PAGE === */
@@ -184,7 +184,7 @@ nav li a.active {
 
 .productbox a {
   display: inline-block;
-  background-color: #4D89F7; /* Soft sky blue */
+  background-color: #FF6F61; /* Soft coral */
   color: white;
   text-decoration: none;
   padding: 10px 15px;
@@ -195,22 +195,22 @@ nav li a.active {
 }
 
 .productbox a:hover {
-  background-color: #357BEE; /* Slightly deeper blue */
+  background-color: #FF5733; /* Deeper coral */
 }
 
 
 /* === FOOTER === */
 #footer {
   text-align: center;
-  background-color: #253B56; /* Deep blue-gray */
-  color: #B4D9FF; /* Light pastel blue */
+  background-color: #2C3E50; /* Deep slate gray */
+  color: #D1D8E0; /* Soft light gray */
   padding: 20px;
   margin: 40px 20px 20px;
   border-radius: 10px;
 }
 
 #footer a {
-  color: #6C9CFF; /* Bright pastel blue */
+  color: #FF6F61; /* Soft coral */
   text-decoration: underline;
   margin: 0 10px;
 }
@@ -221,38 +221,38 @@ nav li a.active {
 
 /* === DARK MODE === */
 body.dark-mode {
-  background-color: #1D2A40; /* Dark blue-gray */
-  color: #D1D8F4; /* Light lavender */
+  background-color: #34495E; /* Dark slate gray */
+  color: #BDC3C7; /* Light metallic gray */
 }
 
 body.dark-mode section,
 body.dark-mode .textsection,
 body.dark-mode .product-box,
 body.dark-mode .store-item {
-  background-color: #2A3B55; /* Darker blue-gray */
+  background-color: #2C3E50; /* Darker slate gray */
 }
 
 body.dark-mode nav li a {
-  color: #F1F6FC; /* Soft white */
+  color: #E2E8F0; /* Soft light gray */
 }
 
 body.dark-mode nav li a:hover,
 body.dark-mode nav li a.active {
-  background-color: #37496D; /* Darker slate blue */
+  background-color: #34495E; /* Darker slate gray */
 }
 
 body.dark-mode #footer {
-  background-color: #1D2A40; /* Dark blue-gray */
+  background-color: #34495E; /* Dark slate gray */
 }
 
 body.dark-mode .see-more-btn,
 body.dark-mode .add-to-cart {
-  background-color: #4D89F7; /* Soft sky blue */
+  background-color: #FF6F61; /* Soft coral */
 }
 
 body.dark-mode .see-more-btn:hover,
 body.dark-mode .add-to-cart:hover {
-  background-color: #357BEE; /* Slightly deeper blue */
+  background-color: #FF5733; /* Deeper coral */
 }
 
 /* === RESPONSIVE === */
@@ -303,7 +303,7 @@ body.dark-mode .add-to-cart:hover {
 #navMenu button {
   background: none;
   border: none;
-  color: #7C9EF3; /* Soft sky blue */
+  color: #FF6F61; /* Soft coral */
   font-size: 1rem;
   cursor: pointer;
   padding: 8px 12px;
@@ -311,16 +311,16 @@ body.dark-mode .add-to-cart:hover {
 }
 
 #navMenu button:hover {
-  color: #6C9CFF; /* Bright pastel blue */
+  color: #FF5733; /* Deeper coral */
 }
 
 #userStatus a {
-  color: #7C9EF3; /* Soft sky blue */
+  color: #FF6F61; /* Soft coral */
   text-decoration: none;
   padding: 8px 12px;
   transition: color 0.3s ease;
 }
 
 #userStatus a:hover {
-  color: #6C9CFF; /* Bright pastel blue */
+  color: #FF5733; /* Deeper coral */
 }
