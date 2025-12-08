@@ -3,170 +3,187 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin Dashboard | Prebuiltid</title>
-  <link rel="stylesheet" href="admin.css" />
+  <title>Prebuiltid | Admin</title>
+
+  <link rel="stylesheet" href="admin.css">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+
+  <script>
+    const firebaseConfig = { 
+      apiKey: "AIzaSyBkbXzURYKixz4R28OYMUOueA9ysG3Q1Lo",
+      authDomain: "prebuiltid-website.firebaseapp.com",
+      projectId: "prebuiltid-website",
+      storageBucket: "prebuiltid-website.firebasestorage.app",
+      messagingSenderId: "854871585546",
+      appId: "1:854871585546:web:568400979292a0c31740f3",
+      measurementId: "G-YS1Q1904H6"
+    };
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.getAuth();
+    const db = firebase.getFirestore();
+
+    const ADMIN_EMAILS = ["prebuiltid@gmail.com"];
+  </script>
+
 </head>
 <body>
-<header class="admin-header">
-  <h1>Admin Dashboard</h1>
-  <p>Manage store products & orders</p>
+
+<header id="header">
+  <img src="Images/Prebuiltid.png" id="HIcon" alt="Logo">
+  <h1 id="HH1">Prebuiltid Admin</h1>
+
+  <nav>
+    <ul>
+      <li><a href="index.html">Kodu</a></li>
+      <li><a href="#" class="active">Admin</a></li>
+      <li><a href="#" id="logoutBtn">Logi välja</a></li>
+    </ul>
+  </nav>
 </header>
 
-<div id="status" class="status-box">Checking admin permissions...</div>
+<section>
+  <h2>Toodete haldamine</h2>
 
-<section class="admin-box">
-  <h2>Add Product</h2>
-  <input id="name" placeholder="Product Name" />
-  <input id="price" placeholder="Price (ex: 199)" />
-  <input id="description" placeholder="Description" />
-  <input id="image" placeholder="Image URL" />
-  <input id="category" placeholder="Category" />
-  <input id="link" placeholder="Product Link" />
-  <button id="addProduct">Add Product</button>
+  <div class="admin-box">
+    <h3>Lisa uus toode</h3>
+
+    <label>Nimi:</label>
+    <input type="text" id="pName">
+
+    <label>Hind (€):</label>
+    <input type="number" id="pPrice" step="0.01">
+
+    <label>Pilt (URL):</label>
+    <input type="text" id="pImage">
+
+    <label>Kategooria:</label>
+    <input type="text" id="pCategory">
+
+    <label>Kirjeldus:</label>
+    <textarea id="pDescription"></textarea>
+
+    <label>Kogus:</label>
+    <input type="number" id="pQuantity" min="0">
+
+    <button id="addProductBtn">Lisa toode</button>
+  </div>
+
+  <h3>Olemasolevad tooted</h3>
+  <div id="productList"></div>
 </section>
 
-<section class="admin-box">
-  <h2>Existing Products</h2>
-  <div id="productList">Loading products...</div>
+<section>
+  <h2>Tellimused</h2>
+  <div id="orderList"></div>
 </section>
 
-<section class="admin-box">
-  <h2>Orders</h2>
-  <div id="ordersList">Loading orders...</div>
-</section>
+<script>
+  firebase.onAuthStateChanged(auth, user => {
+    if (!user) return location.href = "login.html";
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, orderBy, query } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-
-/* use same firebaseConfig */
-const firebaseConfig = { 
-  apiKey: "AIzaSyBkbXzURYKixz4R28OYMUOueA9ysG3Q1Lo",
-  authDomain: "prebuiltid-website.firebaseapp.com",
-  projectId: "prebuiltid-website",
-  storageBucket: "prebuiltid-website.firebasestorage.app",
-  messagingSenderId: "854871585546",
-  appId: "1:854871585546:web:568400979292a0c31740f3",
-  measurementId: "G-YS1Q1904H6"
-};
-
-const ADMIN_EMAILS = ["prebuiltid@gmail.com","info@komisjonikaubamaja.ee"];
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-const statusDiv = document.getElementById("status");
-const productList = document.getElementById("productList");
-const ordersList = document.getElementById("ordersList");
-
-onAuthStateChanged(auth, user => {
-  if (!user) { statusDiv.innerText = "You must log in."; window.location.href = "login.html"; return; }
-  const normalizedUser = (user.email || "").toLowerCase();
-  const admins = ADMIN_EMAILS.map(e=>e.toLowerCase());
-  if (!admins.includes(normalizedUser)) { statusDiv.innerText = "Not an admin."; setTimeout(()=>window.location.href="index.html",1200); return; }
-  statusDiv.innerText = "Logged in as admin: " + user.email;
-  loadProducts();
-  loadOrders();
-});
-
-/* products */
-async function loadProducts(){
-  productList.innerHTML = "";
-  const snaps = await getDocs(collection(db, "products"));
-  snaps.forEach(item=>{
-    const p = item.data();
-    const div = document.createElement("div");
-    div.className = "product-item";
-    div.innerHTML = `
-      <h3>${p.name}</h3>
-      <img src="${p.image}" width="150" />
-      <label>Price</label><input class="edit-price" value="${p.price}" />
-      <label>Image</label><input class="edit-image" value="${p.image}" />
-      <label>Description</label><input class="edit-description" value="${p.description}" />
-      <label>Category</label><input class="edit-category" value="${p.category}" />
-      <label>Link</label><input class="edit-link" value="${p.link}" />
-      <button class="update-btn">Update</button>
-      <button class="delete-btn">Delete</button>
-      <hr>
-    `;
-    div.querySelector(".update-btn").onclick = async ()=>{
-      const id = item.id;
-      await updateDoc(doc(db, "products", id), {
-        price: div.querySelector(".edit-price").value,
-        image: div.querySelector(".edit-image").value,
-        description: div.querySelector(".edit-description").value,
-        category: div.querySelector(".edit-category").value,
-        link: div.querySelector(".edit-link").value
-      });
-      alert("Product updated!");
-    };
-    div.querySelector(".delete-btn").onclick = async ()=>{
-      if (!confirm("Delete product?")) return;
-      await deleteDoc(doc(db, "products", item.id));
-      loadProducts();
-    };
-    productList.appendChild(div);
+    const email = user.email.toLowerCase();
+    if (!ADMIN_EMAILS.includes(email)) {
+      return location.href = "index.html";
+    }
   });
-}
 
-document.getElementById("addProduct").onclick = async ()=>{
-  const newP = {
-    name: document.getElementById("name").value,
-    price: document.getElementById("price").value,
-    description: document.getElementById("description").value,
-    image: document.getElementById("image").value,
-    category: document.getElementById("category").value,
-    link: document.getElementById("link").value
+  document.getElementById("logoutBtn").onclick = () => {
+    firebase.signOut(auth).then(() => location.href = "login.html");
   };
-  await addDoc(collection(db, "products"), newP);
-  alert("Product added!");
-  loadProducts();
-};
 
-/* orders */
-async function loadOrders(){
-  ordersList.innerHTML = "";
-  try {
-    const q = query(collection(db, "orders"), orderBy("createdAt","desc"));
-    const snaps = await getDocs(q);
-    if (snaps.empty) { ordersList.innerHTML = "<p>Tellimusi pole.</p>"; return; }
-    snaps.forEach(docSnap=>{
-      const d = docSnap.data();
-      const id = docSnap.id;
+  const productsRef = firebase.collection(db, "products");
+  const ordersRef = firebase.collection(db, "orders");
+
+  // Add product
+  document.getElementById("addProductBtn").onclick = async () => {
+    const name = pName.value.trim();
+    const price = parseFloat(pPrice.value);
+    const image = pImage.value.trim();
+    const category = pCategory.value.trim();
+    const description = pDescription.value.trim();
+    const quantity = parseInt(pQuantity.value);
+
+    if (!name || !price || !image || !category || !description || isNaN(quantity)) {
+      alert("Täida kõik väljad!");
+      return;
+    }
+
+    await firebase.addDoc(productsRef, {
+      name, price, image, category, description, quantity,
+      createdAt: firebase.serverTimestamp()
+    });
+
+    pName.value = "";
+    pPrice.value = "";
+    pImage.value = "";
+    pCategory.value = "";
+    pDescription.value = "";
+    pQuantity.value = "";
+
+    alert("Toode lisatud!");
+  };
+
+  // Load products
+  firebase.onSnapshot(productsRef, snap => {
+    const list = document.getElementById("productList");
+    list.innerHTML = "";
+
+    snap.forEach(doc => {
+      const p = doc.data();
+
+      const div = document.createElement("div");
+      div.className = "product-item";
+      div.innerHTML = `
+        <strong>${p.name}</strong><br>
+        Hind: €${p.price}<br>
+        Kategooria: ${p.category}<br>
+        Laos: ${p.quantity}<br>
+        <button onclick="deleteProduct('${doc.id}')">Kustuta</button>
+      `;
+
+      list.appendChild(div);
+    });
+  });
+
+  window.deleteProduct = async (id) => {
+    if (!confirm("Kustuta toode?")) return;
+    await firebase.deleteDoc(firebase.doc(db, "products", id));
+  };
+
+  firebase.onSnapshot(ordersRef, snap => {
+    const list = document.getElementById("orderList");
+    list.innerHTML = "";
+
+    snap.forEach(doc => {
+      const o = doc.data();
+
       const div = document.createElement("div");
       div.className = "order-item";
-      const when = d.createdAt && d.createdAt.toDate ? d.createdAt.toDate().toLocaleString() : "—";
-      div.innerHTML = `<h3>Tellimus: ${id}</h3>
-        <p><strong>Aeg:</strong> ${when}</p>
-        <p><strong>Email:</strong> ${d.email||'—'}</p>
-        <p><strong>Status:</strong> ${d.status||'—'}</p>
-        <div class="order-products"></div>
-        <div style="margin-top:8px;">
-          <button class="cancel-order">Tühista tellimus</button>
-        </div>
-        <hr>`;
-      const productsDiv = div.querySelector(".order-products");
-      if (Array.isArray(d.products)) {
-        d.products.forEach(p=>{
-          const pEl = document.createElement("div");
-          pEl.innerText = `${p.name} — ${Number(p.price||0).toFixed(2)}€ x ${p.qty}`;
-          productsDiv.appendChild(pEl);
-        });
-      } else productsDiv.innerText = "Tooteid pole.";
-      div.querySelector(".cancel-order").onclick = async ()=>{
-        if (!confirm("Tõesti tühistada tellimus?")) return;
-        await updateDoc(doc(db, "orders", id), { status: "cancelled" });
-        loadOrders();
-      };
-      ordersList.appendChild(div);
+
+      div.innerHTML = `
+        <strong>${o.email}</strong><br>
+        Staatust: <select onchange="updateOrder('${doc.id}', this.value)">
+          <option value="processing" ${o.status === "processing" ? "selected" : ""}>processing</option>
+          <option value="completed" ${o.status === "completed" ? "selected" : ""}>completed</option>
+          <option value="cancelled" ${o.status === "cancelled" ? "selected" : ""}>cancelled</option>
+        </select>
+        <br><br>
+        <strong>Tooted:</strong><br>
+        ${o.products.map(p => `${p.name} x ${p.qty}`).join("<br>")}
+      `;
+
+      list.appendChild(div);
     });
-  } catch (err) {
-    console.error("Load orders error:", err);
-    ordersList.innerHTML = "<p>Tellimuste laadimisel tekkis viga.</p>";
-  }
-}
+  });
+
+  window.updateOrder = async (id, status) => {
+    await firebase.updateDoc(firebase.doc(db, "orders", id), { status });
+  };
 </script>
+
 </body>
 </html>
