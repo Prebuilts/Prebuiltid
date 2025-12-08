@@ -1,87 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" type="image/x-icon" href="/Images/favicon.ico">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Prebuiltid | Pood</title>
-    <link rel="stylesheet" href="store.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Prebuiltid | Pood</title>
+  <link rel="stylesheet" href="store.css" />
 </head>
 <body>
 
 <header id="header">
-    <img src="Images/Prebuiltid.png" alt="Prebuiltid Logo" id="HIcon" />
-    <h1 id="HH1">Prebuiltid</h1>
-    <nav>
-        <ul>
-            <li><a href="https://prebuilts.github.io/Prebuiltid">Kodu</a></li>
-            <li><a href="https://prebuilts.github.io/Prebuiltid/Store" class="active">Pood</a></li>
-            <li><a href="#">Sotsiaalmeediad</a></li>
-            <li><a href="#">Meist</a></li>
-        </ul>
-    </nav>
+  <img src="Images/Prebuiltid.png" alt="Prebuiltid Logo" id="HIcon" />
+  <h1 id="HH1">Prebuiltid</h1>
+  <nav>
+    <ul>
+      <li><a href="https://prebuilts.github.io/Prebuiltid">Kodu</a></li>
+      <li><a href="#" class="active">Pood</a></li>
+      <li><a href="login.html" id="accountLink">Logi sisse</a></li>
+      <li><a href="#" id="logoutBtn" style="display:none">Logi välja</a></li>
+    </ul>
+  </nav>
 </header>
 
 <section class="store-section">
-    <h2>Meie pood</h2>
-    
-    <div class="category-filter">
-        <label for="categorySelect">Filtreeri kategooria järgi:</label>
-        <select id="categorySelect">
-            <option value="all">Kõik</option>
-            <option value="gaming-pcs">Mänguriarvutid</option>
-            <option value="consoles">Konsoolid</option>
-            <option value="controllers">Konsooli Puldid</option>
-            <option value="smartphones">Nutitelefonid</option>
-            <option value="phones">Lauatelefonid</option>
-            <option value="handhelds">Käsikonsoolid</option>
-            <option value="monitors">Monitorid</option>
-            <option value="pcs">Lauaarvutid</option>
-            <option value="gpu">Graafikakaardid</option>
-            <option value="tv">Televiisorid</option>
-            <option value="keyboards">Klaviatuurid</option>
-            <option value="mice">Arvutihiired</option>
-            <option value="headphones">Kõrvaklapid</option>
-            <option value="games">Mängud</option>
-            <option value="routers">Ruuterid</option>
-            <option value="network-switches">Network Switchid</option>
-        </select>
-    </div>
+  <h2>Meie pood</h2>
 
-    <div class="recommended-grid" id="store-product-list"></div>
+  <div class="category-filter">
+    <label for="categorySelect">Filtreeri kategooria järgi:</label>
+    <select id="categorySelect">
+      <option value="all">Kõik</option>
+      <option value="gaming-pcs">Mänguriarvutid</option>
+      <option value="consoles">Konsoolid</option>
+      <option value="controllers">Konsooli Puldid</option>
+      <option value="smartphones">Nutitelefonid</option>
+      <option value="phones">Lauatelefonid</option>
+      <option value="handhelds">Käsikonsoolid</option>
+      <option value="monitors">Monitorid</option>
+      <option value="pcs">Lauaarvutid</option>
+      <option value="gpu">Graafikakaardid</option>
+      <option value="tv">Televiisorid</option>
+      <option value="keyboards">Klaviatuurid</option>
+      <option value="mice">Arvutihiired</option>
+      <option value="headphones">Kõrvaklapid</option>
+      <option value="games">Mängud</option>
+      <option value="routers">Ruuterid</option>
+      <option value="network-switches">Network Switchid</option>
+    </select>
+  </div>
+
+  <div class="recommended-grid" id="store-product-list"></div>
 </section>
 
 <!-- Floating Cart Button -->
 <div id="cart-icon" title="Vaata ostukorvi">
-    🛒 <span id="cart-count">0</span>
+  🛒 <span id="cart-count">0</span>
 </div>
 
 <!-- Slide-out Basket Panel -->
 <div id="basket-panel" aria-hidden="true">
-    <div id="basket-header">
-        <h2>Ostukorv</h2>
-        <button id="close-basket" aria-label="Sulge ostukorv">✖</button>
-    </div>
+  <div id="basket-header">
+    <h2>Ostukorv</h2>
+    <button id="close-basket" aria-label="Sulge ostukorv">✖</button>
+  </div>
 
-    <div id="basket-items"></div>
+  <div id="basket-items"></div>
 
-    <div id="basket-footer">
-        <h3>Kokku: <span id="basket-total">0€</span></h3>
-        <div style="display:flex; gap:8px; margin-top:10px;">
-            <button id="clear-cart-btn">Tühjenda</button>
-            <button id="buy-all-btn">Osta kõik</button>
-        </div>
+  <div id="basket-footer">
+    <h3>Kokku: <span id="basket-total">0€</span></h3>
+    <div class="basket-actions">
+      <button id="clear-cart-btn">Tühjenda</button>
+      <button id="buy-all-btn">Osta kõik</button>
     </div>
+    <div style="margin-top:10px;">
+      <button id="my-orders-btn">Minu tellimused</button>
+    </div>
+  </div>
 </div>
 
 <!-- Checkout Confirmation Modal -->
 <div id="checkout-modal" class="modal" aria-hidden="true">
   <div class="modal-content">
     <h3>Oled sa kindel?</h3>
-    <p id="checkout-message">Palun sisesta oma e-post — me võtame teiega ühendust 1-5 tööpäeva jooksul. Makse toimub kohapeal.</p>
-
-    <label for="checkout-email">E-post:</label>
-    <input id="checkout-email" type="email" placeholder="meie@e-post.ee">
+    <p id="checkout-message">Me kontakteerume teiega 1-5 tööpäeva jooksul ning saadame info kuhu järgi tulla. Makse toimub kohapeal.</p>
 
     <div style="margin-top:12px; display:flex; gap:10px; justify-content:flex-end;">
       <button id="cancel-checkout">Tühista</button>
@@ -90,8 +89,19 @@
   </div>
 </div>
 
+<!-- My Orders Modal -->
+<div id="my-orders-modal" class="modal" aria-hidden="true">
+  <div class="modal-content">
+    <h3>Minu tellimused</h3>
+    <div id="my-orders-list"></div>
+    <div style="margin-top:12px; display:flex; justify-content:flex-end;">
+      <button id="close-my-orders">Sulge</button>
+    </div>
+  </div>
+</div>
+
 <footer id="footer">
-    <p>Kõik õigused kaitstud &copy; Prebuiltid 2025</p>
+  <p>Kõik õigused kaitstud &copy; Prebuiltid 2025</p>
 </footer>
 
 <script type="module" src="store.js"></script>
