@@ -1,81 +1,318 @@
-/* (Beginning: reuse your existing store CSS; below are additions / overrides) */
+/* ============================================
+   GLOBAL STYLING – MATCHES index.html
+============================================ */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #F4F4F9;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
 
-/* Ensure base responsiveness and iPhone-friendly scrolling */
-html, body {
-  -webkit-text-size-adjust: 100%;
-  -webkit-font-smoothing: antialiased;
+/* Section styling */
+section {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #F1F3F5;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Headers */
+h1, h2 {
+  color: #1A1A1A;
+  margin: 0;
+}
+
+/* ============================================
+   HEADER (same as index.html)
+============================================ */
+#header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 15px 30px;
+  background-color: #2C3E50;
+  border-bottom: 5px solid #34495E;
+}
+
+#HIcon {
+  max-width: 60px;
+  height: auto;
+}
+
+#HH1 {
+  color: #D1D8E0;
+  margin-left: 10px;
+  font-size: 1.6rem;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  padding: 0;
+  margin: 0;
+}
+
+nav li a {
+  color: #E2E8F0;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+nav li a:hover,
+nav li a.active {
+  background-color: #34495E;
+}
+
+/* ============================================
+   STORE GRID — 3 ROW SCROLLING (IPHONE FIXED)
+============================================ */
+.recommended-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(3, auto);
+  grid-auto-columns: 260px;
+
+  gap: 20px;
+  padding: 10px;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  /* iPhone scroll smooth fix */
   -webkit-overflow-scrolling: touch;
 }
 
-/* Floating cart & panel (responsive) */
+/* Hide scrollbar (mobile safe) */
+.recommended-grid::-webkit-scrollbar {
+  display: none;
+}
+.recommended-grid {
+  scrollbar-width: none;
+}
+
+/* ============================================
+   PRODUCT BOX
+============================================ */
+.product-box {
+  background: white;
+  border: 1px solid #E2E8F4;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+
+  width: 240px;
+  box-sizing: border-box;
+  scroll-snap-align: start;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.product-box:hover {
+  transform: scale(1.05);
+}
+
+.product-box img {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.product-box h3 {
+  margin: 6px 0;
+}
+
+.product-box p {
+  color: #555;
+  font-size: 14px;
+}
+
+/* Buttons */
+.product-box button {
+  background-color: #FF6F61;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.product-box button:hover {
+  background-color: #FF5733;
+}
+
+/* ============================================
+   FLOATING CART BUTTON
+============================================ */
 #cart-icon {
   position: fixed;
-  right: 16px;
-  bottom: 20px;
+  bottom: 25px;
+  right: 25px;
   background: #FF6F61;
   color: white;
-  padding: 10px 14px;
-  border-radius: 999px;
-  font-size: 18px;
+  padding: 12px 18px;
+  border-radius: 50px;
+  font-size: 20px;
   cursor: pointer;
-  z-index: 1200;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.16);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+  z-index: 2000;
 }
 
-#cart-icon span {
+#cart-count {
   background: white;
   color: #FF6F61;
-  padding: 3px 8px;
-  border-radius: 999px;
-  margin-left: 8px;
-  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 50%;
+  font-weight: bold;
+  margin-left: 6px;
 }
 
+/* ============================================
+   BASKET SLIDE PANEL
+============================================ */
 #basket-panel {
   position: fixed;
-  right: -100%;
   top: 0;
-  width: 380px;
+  right: -380px;
+  width: 350px;
   height: 100%;
-  background: #fff;
-  box-shadow: -8px 0 24px rgba(0,0,0,0.2);
-  transition: right 0.28s ease;
-  z-index: 1100;
+  background: #FFF;
+  box-shadow: -3px 0 10px rgba(0,0,0,0.2);
+  transition: right 0.35s ease;
+  z-index: 2500;
   display: flex;
   flex-direction: column;
-  padding: 16px;
-  -webkit-overflow-scrolling: touch;
 }
 
 #basket-panel.open {
   right: 0;
 }
 
+#basket-header {
+  background: #2C3E50;
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
 #basket-items {
   flex: 1;
   overflow-y: auto;
-  margin-top: 12px;
-  -webkit-overflow-scrolling: touch;
+  padding: 10px;
 }
 
-.basket-item { display:flex; gap:8px; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee; }
-
-/* Modal styles */
-.modal { position:fixed; left:0; top:0; right:0; bottom:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.45); z-index:1500; padding:20px; }
-.modal.show { display:flex; }
-.modal-content { width:100%; max-width:420px; background:#fff; padding:18px; border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.22); }
-
-/* iPhone specific layout niceties */
-@supports (-webkit-overflow-scrolling: touch) {
-  /* ensure input tap highlight and smooth scrolling */
-  input, button { -webkit-tap-highlight-color: rgba(0,0,0,0.05); }
+#basket-footer {
+  padding: 15px;
+  border-top: 1px solid #EEE;
+  background: #F8F8F8;
 }
 
-/* Small-screen tweaks */
-@media (max-width: 600px) {
-  #basket-panel { width:100%; right:-100%; }
-  #basket-panel.open { right:0; }
-  .modal-content { max-width:92%; padding:14px; }
+/* ============================================
+   BASKET ITEM
+============================================ */
+.basket-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background: #FFF;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 
-/* keep previous visual styling intact (you can merge with your existing CSS) */
+.basket-item img {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.basket-item button {
+  background: #FF6F61;
+  border: none;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.basket-item button:hover {
+  background: #FF5733;
+}
+
+/* ============================================
+   MODALS (Checkout & My Orders)
+============================================ */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+}
+
+/* ============================================
+   FOOTER
+============================================ */
+#footer {
+  text-align: center;
+  background-color: #2C3E50;
+  color: #D1D8E0;
+  padding: 20px;
+  margin: 40px 20px 20px;
+  border-radius: 10px;
+}
+
+/* ============================================
+   RESPONSIVE FIXES
+============================================ */
+
+/* iPhone small screens fix */
+@media (max-width: 500px) {
+  .recommended-grid {
+    grid-auto-columns: 82%;
+    padding-bottom: 20px;
+  }
+
+  .product-box {
+    width: 100%;
+  }
+
+  #basket-panel {
+    width: 100%;
+  }
+}
