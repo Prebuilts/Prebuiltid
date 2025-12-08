@@ -7,12 +7,19 @@
 
   <link rel="stylesheet" href="admin.css">
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+  <!-- Firebase SDK (MODULAR v10) -->
+  <script type="module">
 
-  <script>
+    /* ---------------- FIREBASE IMPORTS ---------------- */
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { 
+      getAuth, onAuthStateChanged, signOut 
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { 
+      getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    /* ---------------- CONFIG ---------------- */
     const firebaseConfig = { 
       apiKey: "AIzaSyBkbXzURYKixz4R28OYMUOueA9ysG3Q1Lo",
       authDomain: "prebuiltid-website.firebaseapp.com",
@@ -22,14 +29,138 @@
       appId: "1:854871585546:web:568400979292a0c31740f3",
       measurementId: "G-YS1Q1904H6"
     };
-    const app = firebase.initializeApp(firebaseConfig);
-    const auth = firebase.getAuth();
-    const db = firebase.getFirestore();
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const db = getFirestore();
 
     const ADMIN_EMAILS = ["prebuiltid@gmail.com"];
-  </script>
 
+    /* ---------------- AUTH CHECK ---------------- */
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        location.href = "login.html";
+        return;
+      }
+
+      if (!ADMIN_EMAILS.includes(user.email.toLowerCase())) {
+        location.href = "index.html";
+      }
+    });
+
+    /* ---------------- LOGOUT BUTTON ---------------- */
+    window.logout = () => {
+      signOut(auth);
+    };
+
+
+    /* ---------------- FIRESTORE REFS ---------------- */
+    const productsRef = collection(db, "products");
+    const ordersRef = collection(db, "orders");
+
+
+    /* ---------------- ADD PRODUCT ---------------- */
+    window.addProduct = async () => {
+      const name = document.getElementById("pName").value.trim();
+      const price = parseFloat(document.getElementById("pPrice").value);
+      const image = document.getElementById("pImage").value.trim();
+      const category = document.getElementById("pCategory").value.trim();
+      const description = document.getElementById("pDescription").value.trim();
+      const quantity = parseInt(document.getElementById("pQuantity").value);
+
+      if (!name || !price || !image || !category || !description || isNaN(quantity)) {
+        alert("Täida kõik väljad!");
+        return;
+      }
+
+      await addDoc(productsRef, {
+        name,
+        price,
+        image,
+        category,
+        description,
+        quantity,
+        createdAt: serverTimestamp()
+      });
+
+      alert("Toode lisatud!");
+
+      document.getElementById("pName").value = "";
+      document.getElementById("pPrice").value = "";
+      document.getElementById("pImage").value = "";
+      document.getElementById("pCategory").value = "";
+      document.getElementById("pDescription").value = "";
+      document.getElementById("pQuantity").value = "";
+    };
+
+
+    /* ---------------- LOAD PRODUCTS ---------------- */
+    onSnapshot(productsRef, (snapshot) => {
+      const list = document.getElementById("productList");
+      list.innerHTML = "";
+
+      snapshot.forEach((docSnap) => {
+        const p = docSnap.data();
+
+        const div = document.createElement("div");
+        div.className = "product-item";
+        div.innerHTML = `
+          <strong>${p.name}</strong><br>
+          Hind: €${p.price}<br>
+          Kategooria: ${p.category}<br>
+          Laos: ${p.quantity}<br>
+          <button onclick="deleteProduct('${docSnap.id}')">Kustuta</button>
+        `;
+
+        list.appendChild(div);
+      });
+    });
+
+
+    /* ---------------- DELETE PRODUCT ---------------- */
+    window.deleteProduct = async (id) => {
+      if (!confirm("Kustuta toode?")) return;
+      await deleteDoc(doc(db, "products", id));
+    };
+
+
+    /* ---------------- LOAD ORDERS ---------------- */
+    onSnapshot(ordersRef, (snapshot) => {
+      const list = document.getElementById("orderList");
+      list.innerHTML = "";
+
+      snapshot.forEach((docSnap) => {
+        const o = docSnap.data();
+
+        const div = document.createElement("div");
+        div.className = "order-item";
+
+        div.innerHTML = `
+          <strong>${o.email}</strong><br>
+          Staatus:
+          <select onchange="updateOrder('${docSnap.id}', this.value)">
+            <option value="processing" ${o.status === "processing" ? "selected" : ""}>processing</option>
+            <option value="completed" ${o.status === "completed" ? "selected" : ""}>completed</option>
+            <option value="cancelled" ${o.status === "cancelled" ? "selected" : ""}>cancelled</option>
+          </select>
+          <br><br>
+          <strong>Tooted:</strong><br>
+          ${o.products.map(p => `${p.name} x ${p.qty}`).join("<br>")}
+        `;
+
+        list.appendChild(div);
+      });
+    });
+
+
+    /* ---------------- UPDATE ORDER ---------------- */
+    window.updateOrder = async (id, status) => {
+      await updateDoc(doc(db, "orders", id), { status });
+    };
+
+  </script>
 </head>
+
 <body>
 
 <header id="header">
@@ -40,10 +171,11 @@
     <ul>
       <li><a href="index.html">Kodu</a></li>
       <li><a href="#" class="active">Admin</a></li>
-      <li><a href="#" id="logoutBtn">Logi välja</a></li>
+      <li><a href="#" onclick="logout()">Logi välja</a></li>
     </ul>
   </nav>
 </header>
+
 
 <section>
   <h2>Toodete haldamine</h2>
@@ -69,121 +201,19 @@
     <label>Kogus:</label>
     <input type="number" id="pQuantity" min="0">
 
-    <button id="addProductBtn">Lisa toode</button>
+    <button onclick="addProduct()">Lisa toode</button>
   </div>
 
   <h3>Olemasolevad tooted</h3>
   <div id="productList"></div>
 </section>
 
+
 <section>
   <h2>Tellimused</h2>
   <div id="orderList"></div>
 </section>
 
-<script>
-  firebase.onAuthStateChanged(auth, user => {
-    if (!user) return location.href = "login.html";
-
-    const email = user.email.toLowerCase();
-    if (!ADMIN_EMAILS.includes(email)) {
-      return location.href = "index.html";
-    }
-  });
-
-  document.getElementById("logoutBtn").onclick = () => {
-    firebase.signOut(auth).then(() => location.href = "login.html");
-  };
-
-  const productsRef = firebase.collection(db, "products");
-  const ordersRef = firebase.collection(db, "orders");
-
-  // Add product
-  document.getElementById("addProductBtn").onclick = async () => {
-    const name = pName.value.trim();
-    const price = parseFloat(pPrice.value);
-    const image = pImage.value.trim();
-    const category = pCategory.value.trim();
-    const description = pDescription.value.trim();
-    const quantity = parseInt(pQuantity.value);
-
-    if (!name || !price || !image || !category || !description || isNaN(quantity)) {
-      alert("Täida kõik väljad!");
-      return;
-    }
-
-    await firebase.addDoc(productsRef, {
-      name, price, image, category, description, quantity,
-      createdAt: firebase.serverTimestamp()
-    });
-
-    pName.value = "";
-    pPrice.value = "";
-    pImage.value = "";
-    pCategory.value = "";
-    pDescription.value = "";
-    pQuantity.value = "";
-
-    alert("Toode lisatud!");
-  };
-
-  // Load products
-  firebase.onSnapshot(productsRef, snap => {
-    const list = document.getElementById("productList");
-    list.innerHTML = "";
-
-    snap.forEach(doc => {
-      const p = doc.data();
-
-      const div = document.createElement("div");
-      div.className = "product-item";
-      div.innerHTML = `
-        <strong>${p.name}</strong><br>
-        Hind: €${p.price}<br>
-        Kategooria: ${p.category}<br>
-        Laos: ${p.quantity}<br>
-        <button onclick="deleteProduct('${doc.id}')">Kustuta</button>
-      `;
-
-      list.appendChild(div);
-    });
-  });
-
-  window.deleteProduct = async (id) => {
-    if (!confirm("Kustuta toode?")) return;
-    await firebase.deleteDoc(firebase.doc(db, "products", id));
-  };
-
-  firebase.onSnapshot(ordersRef, snap => {
-    const list = document.getElementById("orderList");
-    list.innerHTML = "";
-
-    snap.forEach(doc => {
-      const o = doc.data();
-
-      const div = document.createElement("div");
-      div.className = "order-item";
-
-      div.innerHTML = `
-        <strong>${o.email}</strong><br>
-        Staatust: <select onchange="updateOrder('${doc.id}', this.value)">
-          <option value="processing" ${o.status === "processing" ? "selected" : ""}>processing</option>
-          <option value="completed" ${o.status === "completed" ? "selected" : ""}>completed</option>
-          <option value="cancelled" ${o.status === "cancelled" ? "selected" : ""}>cancelled</option>
-        </select>
-        <br><br>
-        <strong>Tooted:</strong><br>
-        ${o.products.map(p => `${p.name} x ${p.qty}`).join("<br>")}
-      `;
-
-      list.appendChild(div);
-    });
-  });
-
-  window.updateOrder = async (id, status) => {
-    await firebase.updateDoc(firebase.doc(db, "orders", id), { status });
-  };
-</script>
 
 </body>
 </html>
