@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -10,7 +10,7 @@
 
 <header class="admin-header">
   <h1>Admin Dashboard</h1>
-  <p>Manage store products</p>
+  <p>Manage store products & customer orders</p>
 </header>
 
 <div id="status" class="status-box">Checking admin permissions...</div>
@@ -20,7 +20,7 @@
   <h2>Add Product</h2>
 
   <input id="name" placeholder="Product Name">
-  <input id="price" placeholder="Price (ex: 199)">
+  <input id="price" placeholder="Price (ex: 199€)">
   <input id="description" placeholder="Description">
   <input id="image" placeholder="Image URL">
   <input id="category" placeholder="Category">
@@ -35,27 +35,21 @@
   <div id="productList">Loading products...</div>
 </section>
 
-<!-- Orders section (new) -->
-<section class="admin-box">
-  <h2>Orders</h2>
-  <div id="ordersList">Loading orders...</div>
-</section>
+<!-- Orders Section (Loaded by JS) -->
+<div id="ordersContainer"></div>
 
 <!-- Firebase Script -->
 <script type="module">
-  /* === Admin Firebase (existing admin project) === */
-  import { initializeApp as initAdminApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-  import { getFirestore as getAdminFirestore, collection as collAdmin, getDocs as getDocsAdmin, addDoc as addDocAdmin, deleteDoc as deleteDocAdmin, updateDoc as updateDocAdmin, doc as docAdmin } 
-    from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+  /* === Firebase Setup === */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+  import { 
+    getFirestore, collection, getDocs, addDoc, deleteDoc, updateDoc, doc 
+  } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-  /* === Shop Firebase (the project your store page uses) === */
-  import { initializeApp as initShopApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-  import { getFirestore as getShopFirestore, collection as collShop, getDocs as getDocsShop, updateDoc as updateDocShop, doc as docShop, onSnapshot as onSnapshotShop } 
-    from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged } 
+  from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
-  /* === ADMIN PROJECT CONFIG (your existing admin config) === */
-  const adminConfig = { 
+  const firebaseConfig = { 
       apiKey: "AIzaSyBkbXzURYKixz4R28OYMUOueA9ysG3Q1Lo",
       authDomain: "prebuiltid-website.firebaseapp.com",
       projectId: "prebuiltid-website",
@@ -65,38 +59,18 @@
       measurementId: "G-YS1Q1904H6"
   };
 
-  /* === SHOP PROJECT CONFIG (same as your store page) ===
-     This must match the project where the store saved orders.
-  */
-  const shopConfig = {
-      apiKey: "AIzaSyBkbXzURYKixz4R28OYMUOueA9ysG3Q1Lo",
-      authDomain: "prebuiltid-website.firebaseapp.com",
-      projectId: "prebuiltid-website",
-      storageBucket: "prebuiltid-website.firebasestorage.app",
-      messagingSenderId: "854871585546",
-      appId: "1:854871585546:web:568400979292a0c31740f3",
-      measurementId: "G-YS1Q1904H6"
-  };
-
-  /* === Admin emails allowed === */
   const ADMIN_EMAILS = [
     "prebuiltid@gmail.com",
     "info@komisjonikaubamaja.ee"
   ];
 
-  /* initialize admin app (this is your existing admin app) */
-  const adminApp = initAdminApp(adminConfig, "adminApp");
-  const adminDb = getAdminFirestore(adminApp);
-  const auth = getAuth(adminApp);
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
 
-  /* initialize shop app (used only for orders collection) */
-  const shopApp = initShopApp(shopConfig, "shopApp");
-  const shopDb = getShopFirestore(shopApp);
-
-  /* DOM refs */
   const statusDiv = document.getElementById("status");
   const productList = document.getElementById("productList");
-  const ordersList = document.getElementById("ordersList");
+  const ordersContainer = document.getElementById("ordersContainer");
 
   /* === CHECK ADMIN LOGGED IN === */
   onAuthStateChanged(auth, user => {
@@ -106,22 +80,29 @@
       return;
     }
 
-    if (!ADMIN_EMAILS.includes(user.email)) {
+    // Normalize emails to lowercase for safe admin checks
+    const normalizedUserEmail = user.email.toLowerCase();
+    const normalizedAdminList = ADMIN_EMAILS.map(e => e.toLowerCase());
+
+    if (!normalizedAdminList.includes(normalizedUserEmail)) {
       statusDiv.innerHTML = "Not an admin.";
-      window.location.href = "index.html";
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 1500);
       return;
     }
 
     statusDiv.innerHTML = "Logged in as admin: " + user.email;
+
     loadProducts();
-    loadOrdersLive(); // start listening to orders
+    loadOrders();
   });
 
-  /* === LOAD PRODUCTS (existing functionality) === */
+  /* === LOAD PRODUCTS === */
   async function loadProducts() {
     productList.innerHTML = "";
 
-    const snapshot = await getDocsAdmin(collAdmin(adminDb, "products"));
+    const snapshot = await getDocs(collection(db, "products"));
     snapshot.forEach(item => {
       const p = item.data();
 
@@ -153,7 +134,7 @@
 
       /* UPDATE PRODUCT */
       div.querySelector(".update-btn").onclick = async () => {
-        await updateDocAdmin(docAdmin(adminDb, "products", item.id), {
+        await updateDoc(doc(db, "products", item.id), {
           price: div.querySelector(".edit-price").value,
           image: div.querySelector(".edit-image").value,
           description: div.querySelector(".edit-description").value,
@@ -167,7 +148,7 @@
       /* DELETE PRODUCT */
       div.querySelector(".delete-btn").onclick = async () => {
         if (confirm("Delete product?")) {
-          await deleteDocAdmin(docAdmin(adminDb, "products", item.id));
+          await deleteDoc(doc(db, "products", item.id));
           loadProducts();
         }
       };
@@ -187,101 +168,56 @@
       link: document.getElementById("link").value
     };
 
-    await addDocAdmin(collAdmin(adminDb, "products"), newProduct);
+    await addDoc(collection(db, "products"), newProduct);
     alert("Product added!");
     loadProducts();
   };
 
-  /* === ORDERS: LISTEN LIVE (from shop project's 'orders' collection) === */
-  function loadOrdersLive() {
-    // Use onSnapshot for live updates (or fallback to getDocs)
-    try {
-      onSnapshotShop(collShop(shopDb, "orders"), (snapshot) => {
-        renderOrders(snapshot.docs);
-      }, (err) => {
-        console.error("Orders onSnapshot error:", err);
-        // fallback
-        loadOrdersOnce();
-      });
-    } catch (e) {
-      console.warn("Realtime orders not available, doing one-time fetch.", e);
-      loadOrdersOnce();
-    }
-  }
+  /* === LOAD ORDERS === */
+  async function loadOrders() {
+    ordersContainer.innerHTML = `
+      <section class="admin-box">
+        <h2>Kliendi Tellimused</h2>
+        <div id="orderList">Loading...</div>
+      </section>
+    `;
 
-  async function loadOrdersOnce() {
-    try {
-      const snap = await getDocsShop(collShop(shopDb, "orders"));
-      renderOrders(snap.docs);
-    } catch (err) {
-      console.error("Could not load orders:", err);
-      ordersList.innerText = "Tõrge tellimuste laadimisel.";
-    }
-  }
+    const orderListDiv = document.getElementById("orderList");
 
-  function formatDate(ts) {
-    if (!ts) return "—";
-    try {
-      const d = ts.toDate ? ts.toDate() : new Date(ts);
-      return d.toLocaleString();
-    } catch (e) {
-      return String(ts);
-    }
-  }
+    const snapshot = await getDocs(collection(db, "orders"));
+    orderListDiv.innerHTML = "";
 
-  function renderOrders(docs) {
-    ordersList.innerHTML = "";
-    if (!docs || docs.length === 0) {
-      ordersList.innerHTML = "<p>Tellimusi pole.</p>";
+    if (snapshot.empty) {
+      orderListDiv.innerHTML = "<p>Tellimusi ei ole.</p>";
       return;
     }
 
-    docs.sort((a,b) => {
-      const ta = a.data().createdAt ? a.data().createdAt.seconds || 0 : 0;
-      const tb = b.data().createdAt ? b.data().createdAt.seconds || 0 : 0;
-      return tb - ta;
-    });
+    snapshot.forEach(docSnap => {
+      const order = docSnap.data();
 
-    docs.forEach(docItem => {
-      const od = docItem.data();
       const div = document.createElement("div");
-      div.className = "order-item";
+      div.classList.add("order-item");
+
       div.innerHTML = `
-        <h3>Tellimus: ${docItem.id}</h3>
-        <p><strong>Aeg:</strong> ${formatDate(od.createdAt)}</p>
-        <p><strong>Email:</strong> ${od.email || '—'}</p>
-        <p><strong>Status:</strong> ${od.status || '—'}</p>
-        <div class="order-products"></div>
-        <div style="margin-top:8px;">
-          <button class="cancel-order">Tühista tellimus</button>
-        </div>
+        <h3>Tellimus</h3>
+        <p><strong>Email:</strong> ${order.email}</p>
+        <p><strong>Aeg:</strong> ${order.timestamp}</p>
+        <p><strong>Tooted:</strong></p>
+        <ul>
+          ${order.items.map(item => `<li>${item.name} — ${item.price}</li>`).join("")}
+        </ul>
+        <button class="cancel-order">Tühista tellimus</button>
         <hr>
       `;
 
-      const productsDiv = div.querySelector(".order-products");
-      if (Array.isArray(od.products) && od.products.length) {
-        od.products.forEach(p => {
-          const pEl = document.createElement("div");
-          pEl.innerText = `${p.name} — ${Number(p.price || 0).toFixed(2)}€ x ${p.qty}`;
-          productsDiv.appendChild(pEl);
-        });
-      } else {
-        productsDiv.innerText = "Tooteid pole kirjas.";
-      }
-
-      // Cancel button -> set status to 'cancelled' in shop's orders collection
       div.querySelector(".cancel-order").onclick = async () => {
-        if (!confirm("Tõesti tühistada tellimus?")) return;
-        try {
-          await updateDocShop(docShop(shopDb, "orders", docItem.id), { status: "cancelled" });
-          alert("Tellimus tühistatud.");
-        } catch (err) {
-          console.error("Cancel order error:", err);
-          alert("Tühistamisel tekkis viga.");
+        if (confirm("Kas soovid tellimuse tühistada?")) {
+          await deleteDoc(doc(db, "orders", docSnap.id));
+          loadOrders();
         }
       };
 
-      ordersList.appendChild(div);
+      orderListDiv.appendChild(div);
     });
   }
 </script>
