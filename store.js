@@ -7,14 +7,14 @@ import { getAuth, onAuthStateChanged }
 
 /* ================= FIREBASE (same as you had in the working site) ================= */
 const firebaseConfig = { 
-    apiKey: "AIzaSyCXufE4ch7mmOdxxIZ641lTrzDgaDyfGgg",
-    authDomain: "komisjonikaubamaja-website.firebaseapp.com",
-    projectId: "komisjonikaubamaja-website",
-    storageBucket: "komisjonikaubamaja-website.firebasestorage.app",
-    messagingSenderId: "422777959258",
-    appId: "1:422777959258:web:b3b4d1f1a858fd74caf963",
-    measurementId: "G-L2BLBFLT9C"
-};
+      apiKey: "AIzaSyBkbXzURYKixz4R28OYMUOueA9ysG3Q1Lo",
+      authDomain: "prebuiltid-website.firebaseapp.com",
+      projectId: "prebuiltid-website",
+      storageBucket: "prebuiltid-website.firebasestorage.app",
+      messagingSenderId: "854871585546",
+      appId: "1:854871585546:web:568400979292a0c31740f3",
+      measurementId: "G-YS1Q1904H6"
+  };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
