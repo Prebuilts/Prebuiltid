@@ -1,26 +1,29 @@
-/* eslint-disable no-undef */
+/* store.js - requires module environment */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, serverTimestamp } 
-  from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-import { getAuth, onAuthStateChanged } 
-  from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import {
+  getFirestore, collection, getDocs, addDoc, serverTimestamp, query, where, orderBy
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-/* ================= FIREBASE (same as you had in the working site) ================= */
+import {
+  getAuth, onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+/* === Your required single Firebase config (prebuiltid project) === */
 const firebaseConfig = { 
-      apiKey: "AIzaSyBkbXzURYKixz4R28OYMUOueA9ysG3Q1Lo",
-      authDomain: "prebuiltid-website.firebaseapp.com",
-      projectId: "prebuiltid-website",
-      storageBucket: "prebuiltid-website.firebasestorage.app",
-      messagingSenderId: "854871585546",
-      appId: "1:854871585546:web:568400979292a0c31740f3",
-      measurementId: "G-YS1Q1904H6"
-  };
+  apiKey: "AIzaSyBkbXzURYKixz4R28OYMUOueA9ysG3Q1Lo",
+  authDomain: "prebuiltid-website.firebaseapp.com",
+  projectId: "prebuiltid-website",
+  storageBucket: "prebuiltid-website.firebasestorage.app",
+  messagingSenderId: "854871585546",
+  appId: "1:854871585546:web:568400979292a0c31740f3",
+  measurementId: "G-YS1Q1904H6"
+};
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-/* ================= DOM ELEMENTS ================= */
+/* DOM */
 const productContainer = document.getElementById('store-product-list');
 const categorySelect = document.getElementById('categorySelect');
 
@@ -33,270 +36,259 @@ const cartCountEl = document.getElementById("cart-count");
 
 const clearCartBtn = document.getElementById("clear-cart-btn");
 const buyAllBtn = document.getElementById("buy-all-btn");
+const myOrdersBtn = document.getElementById("my-orders-btn");
 
-/* Checkout modal */
 const checkoutModal = document.getElementById("checkout-modal");
-const checkoutEmailInput = document.getElementById("checkout-email");
 const cancelCheckoutBtn = document.getElementById("cancel-checkout");
 const confirmCheckoutBtn = document.getElementById("confirm-checkout");
 const checkoutMessage = document.getElementById("checkout-message");
 
-/* ================= CART (localStorage) ================= */
+const myOrdersModal = document.getElementById("my-orders-modal");
+const myOrdersList = document.getElementById("my-orders-list");
+const closeMyOrdersBtn = document.getElementById("close-my-orders");
+
+const accountLink = document.getElementById("accountLink");
+const logoutBtn = document.getElementById("logoutBtn");
+
+/* Local cart */
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
+function saveCart(){ localStorage.setItem("cart", JSON.stringify(cart)); }
+function cartTotal(){ return cart.reduce((s,i)=> s + Number(i.price||0)*(i.qty||1), 0); }
+function updateCartCount(){ cartCountEl.innerText = cart.reduce((s,i)=> s + (i.qty||0),0); }
 
-/* Helper: persist cart */
-function saveCart() {
-  localStorage.setItem("cart", JSON.stringify(cart));
-}
-
-/* Helper: compute totals */
-function cartTotal() {
-  return cart.reduce((acc, it) => acc + Number(it.price || 0) * (it.qty || 1), 0);
-}
-
-/* Update cart count badge */
-function updateCartCount() {
-  const count = cart.reduce((sum, it) => sum + (it.qty || 0), 0);
-  cartCountEl.innerText = count;
-}
-
-/* Render cart inside the panel */
-function renderCart() {
+/* Render cart */
+function renderCart(){
   basketItemsEl.innerHTML = "";
-  if (cart.length === 0) {
-    basketItemsEl.innerHTML = "<p>Korv on tühi.</p>";
-    basketTotalEl.innerText = "0€";
-    updateCartCount();
-    return;
-  }
-
-  cart.forEach(item => {
-    const itemRow = document.createElement("div");
-    itemRow.className = "basket-item";
-
-    // product name & price
-    const nameSpan = document.createElement("span");
-    nameSpan.innerText = `${item.name} — ${Number(item.price).toFixed(2)}€`;
-
-    // quantity controls
+  if (cart.length === 0){ basketItemsEl.innerHTML = "<p>Korb on tühi.</p>"; basketTotalEl.innerText = "0€"; updateCartCount(); return; }
+  cart.forEach(item=>{
+    const row = document.createElement("div");
+    row.className = "basket-item";
+    const name = document.createElement("div");
+    name.innerText = `${item.name} — ${Number(item.price).toFixed(2)}€`;
     const qtyWrap = document.createElement("div");
     qtyWrap.className = "basket-qty";
-
-    const minusBtn = document.createElement("button");
-    minusBtn.className = "qty-btn";
-    minusBtn.innerText = "-";
-    minusBtn.onclick = () => changeQty(item.id, -1);
-
-    const qtySpan = document.createElement("span");
-    qtySpan.innerText = item.qty;
-
-    const plusBtn = document.createElement("button");
-    plusBtn.className = "qty-btn";
-    plusBtn.innerText = "+";
-    plusBtn.onclick = () => changeQty(item.id, 1);
-
-    qtyWrap.appendChild(minusBtn);
-    qtyWrap.appendChild(qtySpan);
-    qtyWrap.appendChild(plusBtn);
-
-    // remove button
-    const removeBtn = document.createElement("button");
-    removeBtn.innerText = "Eemalda";
-    removeBtn.onclick = () => removeItem(item.id);
-
-    itemRow.appendChild(nameSpan);
-    itemRow.appendChild(qtyWrap);
-    itemRow.appendChild(removeBtn);
-
-    basketItemsEl.appendChild(itemRow);
+    const minus = document.createElement("button"); minus.className="qty-btn"; minus.innerText="-";
+    minus.onclick = ()=> changeQty(item.id,-1);
+    const qty = document.createElement("span"); qty.innerText = item.qty;
+    const plus = document.createElement("button"); plus.className="qty-btn"; plus.innerText="+";
+    plus.onclick = ()=> changeQty(item.id,1);
+    qtyWrap.append(minus, qty, plus);
+    const rm = document.createElement("button"); rm.innerText = "Eemalda"; rm.onclick = ()=> removeItem(item.id);
+    row.append(name, qtyWrap, rm);
+    basketItemsEl.appendChild(row);
   });
-
   basketTotalEl.innerText = cartTotal().toFixed(2) + "€";
   updateCartCount();
 }
 
-/* Cart operations */
-function addToCart(product) {
-  const existing = cart.find(p => p.id === product.id);
-  if (existing) existing.qty += 1;
-  else cart.push({ id: product.id, name: product.name, price: Number(product.price || 0), qty: 1 });
-
-  saveCart();
-  renderCart();
+/* Cart ops */
+function addToCart(product){
+  const ex = cart.find(p=>p.id===product.id);
+  if (ex) ex.qty++;
+  else cart.push({ id:product.id, name:product.name, price:Number(product.price||0), qty:1 });
+  saveCart(); renderCart();
 }
-
-function removeItem(id) {
-  cart = cart.filter(i => i.id !== id);
-  saveCart();
-  renderCart();
-}
-
-function changeQty(id, delta) {
-  const it = cart.find(i => i.id === id);
-  if (!it) return;
-  it.qty += delta;
-  if (it.qty <= 0) removeItem(id);
-  saveCart();
-  renderCart();
-}
-
-function clearCart() {
-  cart = [];
-  saveCart();
-  renderCart();
-}
-
-/* Expose addToCart globally so product markup can call it */
 window.addToCart = addToCart;
 
-/* ================= OPEN/CLOSE CART UI ================= */
-cartIcon.addEventListener("click", () => {
-  basketPanel.classList.add("open");
-  basketPanel.setAttribute("aria-hidden", "false");
-});
+function removeItem(id){ cart = cart.filter(i=>i.id!==id); saveCart(); renderCart(); }
+function changeQty(id,delta){ const it = cart.find(i=>i.id===id); if(!it) return; it.qty += delta; if(it.qty<=0) removeItem(id); saveCart(); renderCart(); }
+function clearCart(){ if(!confirm("Tühjendada ostukorv?")) return; cart=[]; saveCart(); renderCart(); }
 
-closeBasket.addEventListener("click", () => {
-  basketPanel.classList.remove("open");
-  basketPanel.setAttribute("aria-hidden", "true");
-});
+/* UI open/close */
+cartIcon.addEventListener("click", ()=> { basketPanel.classList.add("open"); basketPanel.setAttribute("aria-hidden","false"); });
+closeBasket.addEventListener("click", ()=> { basketPanel.classList.remove("open"); basketPanel.setAttribute("aria-hidden","true"); });
 
-/* clear cart */
-clearCartBtn.addEventListener("click", () => {
-  if (!confirm("Tühjendada ostukorv?")) return;
-  clearCart();
-});
+clearCartBtn.addEventListener("click", clearCart);
 
-/* ================= CHECKOUT FLOW ================= */
-
-/* Pre-fill email input when user logged in (if any) */
+/* Auth handling - require login for store (logged-in only) */
+let currentUser = null;
 onAuthStateChanged(auth, user => {
-  if (user && user.email) {
-    checkoutEmailInput.value = user.email;
+  currentUser = user;
+  if (!user) {
+    // not logged in -> redirect to login
+    window.location.href = "login.html";
+    return;
   }
+  // show logout, hide login link
+  accountLink.style.display = "none";
+  logoutBtn.style.display = "inline-block";
+  logoutBtn.onclick = () => signOut(auth);
+  // prefill any UI if needed
+  renderCart();
 });
 
-/* Buy all button -> open modal */
-buyAllBtn.addEventListener("click", () => {
-  if (cart.length === 0) {
-    alert("Ostukorv on tühi.");
+/* Checkout flow: logged-in only, check 3 active orders max */
+buyAllBtn.addEventListener("click", async () => {
+  if (!currentUser) { alert("Palun logi sisse, et teha tellimus."); return; }
+  if (cart.length === 0) { alert("Ostukorv on tühi."); return; }
+
+  // check active orders count for this user
+  try {
+    const ordersRef = collection(db, "orders");
+    // active statuses = pending or processing
+    const q = query(ordersRef, where("uid", "==", currentUser.uid), where("status", "in", ["pending", "processing"]));
+    const snaps = await getDocs(q);
+    if (snaps.size >= 3) {
+      alert("Sul on juba 3 aktiivset tellimust. Palun oota kuni üks neist on lõpetatud või tühistatud.");
+      return;
+    }
+  } catch (err) {
+    console.error("Order count check error:", err);
+    alert("Tellimuse kontrollimisel tekkis viga. Palun proovi hiljem.");
     return;
   }
 
-  // Set message (Estonian)
-  checkoutMessage.innerText = "Me kontakteerume teiega 1-5 tööpäeva jooksul ning saadame info kuhu järgi tulla. Makse toimub kohapeal.";
-  // Prefill email if available (auth listener will handle update too)
+  // show confirmation modal (text already localized)
   checkoutModal.classList.add("show");
   checkoutModal.setAttribute("aria-hidden", "false");
 });
 
-/* Cancel checkout */
-cancelCheckoutBtn.addEventListener("click", () => {
+/* cancel checkout */
+cancelCheckoutBtn.addEventListener("click", ()=> {
   checkoutModal.classList.remove("show");
   checkoutModal.setAttribute("aria-hidden", "true");
 });
 
-/* Confirm checkout - create an 'orders' document in Firestore */
+/* confirm checkout */
 confirmCheckoutBtn.addEventListener("click", async () => {
-  const email = checkoutEmailInput.value?.trim();
-  if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-    alert("Palun sisesta kehtiv e-posti aadress.");
-    return;
-  }
+  if (!currentUser) { alert("Palun logi sisse uuesti."); return; }
 
-  // Build order payload
+  confirmCheckoutBtn.disabled = true;
+  confirmCheckoutBtn.innerText = "Salvestamine...";
+
   const orderPayload = {
-    email,
-    products: cart.map(p => ({ id: p.id, name: p.name, price: Number(p.price), qty: p.qty })),
+    uid: currentUser.uid,
+    email: currentUser.email || null,
+    products: cart.map(p=>({ id:p.id, name:p.name, price: Number(p.price||0), qty: p.qty })),
     status: "pending",
     createdAt: serverTimestamp()
   };
 
   try {
-    // Save to Firestore (orders collection in the same project your products live in)
     await addDoc(collection(db, "orders"), orderPayload);
-
-    // Clear cart after successful save
     clearCart();
-
-    // Close modal
     checkoutModal.classList.remove("show");
     checkoutModal.setAttribute("aria-hidden", "true");
-
-    // Show confirmation text to user (in Estonian)
-    alert("Me kontakteerume teiega 1-5 tööpäeva jooksul ning saadame info kuhu järgi tulla. Makse toimub kohapeal.");
-
+    alert("Tellimus on saadetud! Me kontakteerume teiega 1-5 tööpäeva jooksul ning saadame info kuhu järgi tulla. Makse toimub kohapeal.");
   } catch (err) {
-    console.error("Checkout save error:", err);
+    console.error("Order save error:", err);
     alert("Tellimuse salvestamisel tekkis viga. Palun proovi hiljem.");
+  } finally {
+    confirmCheckoutBtn.disabled = false;
+    confirmCheckoutBtn.innerText = "Kinnita ostu";
   }
 });
 
-/* ================= LOAD PRODUCTS (your existing Firestore logic) ================= */
-let allProducts = [];
+/* My orders modal */
+myOrdersBtn.addEventListener("click", ()=> {
+  if (!currentUser) { alert("Palun logi sisse."); return; }
+  loadMyOrders();
+  myOrdersModal.classList.add("show");
+  myOrdersModal.setAttribute("aria-hidden","false");
+});
+closeMyOrdersBtn.addEventListener("click", ()=> {
+  myOrdersModal.classList.remove("show");
+  myOrdersModal.setAttribute("aria-hidden","true");
+});
 
-async function loadProducts() {
+/* load user's orders and allow cancelling their own orders */
+async function loadMyOrders(){
+  myOrdersList.innerHTML = "<p>Laadin...</p>";
   try {
-    const snapshot = await getDocs(collection(db, "products"));
+    const ordersRef = collection(db, "orders");
+    const q = query(ordersRef, where("uid", "==", currentUser.uid), orderBy("createdAt","desc"));
+    const snap = await getDocs(q);
+    if (snap.empty) { myOrdersList.innerHTML = "<p>Tellimusi ei ole.</p>"; return; }
+    myOrdersList.innerHTML = "";
+    snap.forEach(docSnap=>{
+      const od = docSnap.data();
+      const id = docSnap.id;
+      const div = document.createElement("div");
+      div.style.borderBottom = "1px solid #eee";
+      div.style.padding = "8px 0";
+      const when = od.createdAt && od.createdAt.toDate ? od.createdAt.toDate().toLocaleString() : "—";
+      div.innerHTML = `<p><strong>${when}</strong> — ${od.status || '—'}</p>`;
+      const ul = document.createElement("div");
+      od.products.forEach(p => {
+        const pEl = document.createElement("div");
+        pEl.innerText = `${p.name} — ${Number(p.price).toFixed(2)}€ x ${p.qty}`;
+        ul.appendChild(pEl);
+      });
+      div.appendChild(ul);
 
-    allProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    displayProducts(allProducts);
-  } catch (error) {
-    console.error("Firestore load error:", error);
+      // cancel button only when pending or processing
+      if (od.status === "pending" || od.status === "processing") {
+        const cancelBtn = document.createElement("button");
+        cancelBtn.innerText = "Tühista tellimus";
+        cancelBtn.onclick = async ()=>{
+          if (!confirm("Kas oled kindel, et soovid tühistada selle tellimuse?")) return;
+          try {
+            // attempt deletion (must be allowed by Firestore rules)
+            await import("https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js")
+              .then(m => m.deleteDoc(m.doc(db, "orders", id)));
+            alert("Tellimus tühistatud.");
+            loadMyOrders();
+          } catch (err) {
+            console.error("Cancel order error (client):", err);
+            alert("Tellimuse tühistamisel tekkis viga. Palun pöördu admini poole.");
+          }
+        };
+        div.appendChild(cancelBtn);
+      } else {
+        const note = document.createElement("div");
+        note.style.color = "#666";
+        note.style.fontSize = "13px";
+        note.innerText = "Seda tellimust ei saa enam tühistada.";
+        div.appendChild(note);
+      }
+      myOrdersList.appendChild(div);
+    });
+  } catch (err) {
+    console.error("Load my orders error:", err);
+    myOrdersList.innerHTML = "<p>Tellimuste laadimisel tekkis viga.</p>";
   }
 }
 
+/* PRODUCTS: load from 'products' collection (same logic as before) */
+let allProducts = [];
+async function loadProducts(){
+  try {
+    const snaps = await getDocs(collection(db, "products"));
+    allProducts = snaps.docs.map(d => ({ id: d.id, ...d.data() }));
+    displayProducts(allProducts);
+  } catch (err) {
+    console.error("Load products error:", err);
+    productContainer.innerHTML = "<p>Toodete laadimisel tekkis viga.</p>";
+  }
+}
 loadProducts();
 
-/* ================= DISPLAY PRODUCTS (with Add to Cart) ================= */
-function displayProducts(products) {
+function displayProducts(products){
   productContainer.innerHTML = "";
-
-  if (products.length === 0) {
-    productContainer.innerHTML = "<p>Tooteid ei leitud.</p>";
-    return;
-  }
-
+  if (!products.length) { productContainer.innerHTML = "<p>Tooteid ei leitud.</p>"; return; }
   products.forEach(product => {
-    // Keep only the fields needed for cart to avoid accidental injection
-    const productForCart = {
-      id: product.id,
-      name: product.name,
-      price: Number(product.price || 0)
-    };
-
-    const html = `
+    const productForCart = { id: product.id, name: product.name, price: Number(product.price || 0) };
+    productContainer.innerHTML += `
       <div class="product-box">
-          <img src="${product.image}" alt="${product.name}">
-          <h3>${product.name}</h3>
-          <h3>${product.price}€</h3>
-          <p>${product.description || ''}</p>
-
-          <button onclick="openProductLink('${product.link || '#'}')">Vaata lisaks</button>
-          <button onclick='addToCart(${JSON.stringify(productForCart)})'>Lisa korvi</button>
+        <img src="${product.image || ''}" alt="${product.name}">
+        <h3>${product.name}</h3>
+        <h3>${product.price}€</h3>
+        <p>${product.description || ''}</p>
+        <button onclick="openProductLink('${product.link || '#'}')">Vaata lisaks</button>
+        <button onclick='addToCart(${JSON.stringify(productForCart)})'>Lisa korvi</button>
       </div>
     `;
-    productContainer.innerHTML += html;
   });
 }
+window.openProductLink = (url) => window.open(url, "_blank");
 
-/* ================= CATEGORY FILTER ================= */
-categorySelect.addEventListener("change", () => {
+/* CATEGORY FILTER */
+categorySelect.addEventListener("change", ()=> {
   const category = categorySelect.value;
-
-  if (category === "all") {
-    displayProducts(allProducts);
-  } else {
-    const filtered = allProducts.filter(p => p.category === category);
-    displayProducts(filtered);
-  }
+  if (category === "all") displayProducts(allProducts);
+  else displayProducts(allProducts.filter(p => p.category === category));
 });
 
-/* ================= OPEN LINK ================= */
-window.openProductLink = (url) => {
-  window.open(url, "_blank");
-};
-
-/* ================= INITIAL RENDER ================= */
+/* initial UI render */
 renderCart();
 updateCartCount();
