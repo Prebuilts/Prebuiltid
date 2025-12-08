@@ -1,226 +1,172 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin Dashboard | Prebuiltid</title>
-  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="admin.css" />
 </head>
 <body>
-
 <header class="admin-header">
   <h1>Admin Dashboard</h1>
-  <p>Manage store products & customer orders</p>
+  <p>Manage store products & orders</p>
 </header>
 
 <div id="status" class="status-box">Checking admin permissions...</div>
 
-<!-- Add Product -->
 <section class="admin-box">
   <h2>Add Product</h2>
-
-  <input id="name" placeholder="Product Name">
-  <input id="price" placeholder="Price (ex: 199€)">
-  <input id="description" placeholder="Description">
-  <input id="image" placeholder="Image URL">
-  <input id="category" placeholder="Category">
-  <input id="link" placeholder="Product Link">
-
+  <input id="name" placeholder="Product Name" />
+  <input id="price" placeholder="Price (ex: 199)" />
+  <input id="description" placeholder="Description" />
+  <input id="image" placeholder="Image URL" />
+  <input id="category" placeholder="Category" />
+  <input id="link" placeholder="Product Link" />
   <button id="addProduct">Add Product</button>
 </section>
 
-<!-- Product List -->
 <section class="admin-box">
   <h2>Existing Products</h2>
   <div id="productList">Loading products...</div>
 </section>
 
-<!-- Orders Section (Loaded by JS) -->
-<div id="ordersContainer"></div>
+<section class="admin-box">
+  <h2>Orders</h2>
+  <div id="ordersList">Loading orders...</div>
+</section>
 
-<!-- Firebase Script -->
 <script type="module">
-  /* === Firebase Setup === */
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-  import { 
-    getFirestore, collection, getDocs, addDoc, deleteDoc, updateDoc, doc 
-  } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, orderBy, query } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
-  import { getAuth, onAuthStateChanged } 
-  from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+/* use same firebaseConfig */
+const firebaseConfig = { 
+  apiKey: "AIzaSyBkbXzURYKixz4R28OYMUOueA9ysG3Q1Lo",
+  authDomain: "prebuiltid-website.firebaseapp.com",
+  projectId: "prebuiltid-website",
+  storageBucket: "prebuiltid-website.firebasestorage.app",
+  messagingSenderId: "854871585546",
+  appId: "1:854871585546:web:568400979292a0c31740f3",
+  measurementId: "G-YS1Q1904H6"
+};
 
-  const firebaseConfig = { 
-      apiKey: "AIzaSyBkbXzURYKixz4R28OYMUOueA9ysG3Q1Lo",
-      authDomain: "prebuiltid-website.firebaseapp.com",
-      projectId: "prebuiltid-website",
-      storageBucket: "prebuiltid-website.firebasestorage.app",
-      messagingSenderId: "854871585546",
-      appId: "1:854871585546:web:568400979292a0c31740f3",
-      measurementId: "G-YS1Q1904H6"
-  };
+const ADMIN_EMAILS = ["prebuiltid@gmail.com","info@komisjonikaubamaja.ee"];
 
-  const ADMIN_EMAILS = [
-    "prebuiltid@gmail.com",
-    "info@komisjonikaubamaja.ee"
-  ];
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth(app);
+const statusDiv = document.getElementById("status");
+const productList = document.getElementById("productList");
+const ordersList = document.getElementById("ordersList");
 
-  const statusDiv = document.getElementById("status");
-  const productList = document.getElementById("productList");
-  const ordersContainer = document.getElementById("ordersContainer");
+onAuthStateChanged(auth, user => {
+  if (!user) { statusDiv.innerText = "You must log in."; window.location.href = "login.html"; return; }
+  const normalizedUser = (user.email || "").toLowerCase();
+  const admins = ADMIN_EMAILS.map(e=>e.toLowerCase());
+  if (!admins.includes(normalizedUser)) { statusDiv.innerText = "Not an admin."; setTimeout(()=>window.location.href="index.html",1200); return; }
+  statusDiv.innerText = "Logged in as admin: " + user.email;
+  loadProducts();
+  loadOrders();
+});
 
-  /* === CHECK ADMIN LOGGED IN === */
-  onAuthStateChanged(auth, user => {
-    if (!user) {
-      statusDiv.innerHTML = "You must log in.";
-      window.location.href = "login.html";
-      return;
-    }
-
-    // Normalize emails to lowercase for safe admin checks
-    const normalizedUserEmail = user.email.toLowerCase();
-    const normalizedAdminList = ADMIN_EMAILS.map(e => e.toLowerCase());
-
-    if (!normalizedAdminList.includes(normalizedUserEmail)) {
-      statusDiv.innerHTML = "Not an admin.";
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 1500);
-      return;
-    }
-
-    statusDiv.innerHTML = "Logged in as admin: " + user.email;
-
-    loadProducts();
-    loadOrders();
-  });
-
-  /* === LOAD PRODUCTS === */
-  async function loadProducts() {
-    productList.innerHTML = "";
-
-    const snapshot = await getDocs(collection(db, "products"));
-    snapshot.forEach(item => {
-      const p = item.data();
-
-      const div = document.createElement("div");
-      div.classList.add("product-item");
-      div.innerHTML = `
-        <h3>${p.name}</h3>
-        <img src="${p.image}" width="150">
-        
-        <label>Price</label>
-        <input class="edit-price" value="${p.price}">
-        
-        <label>Image</label>
-        <input class="edit-image" value="${p.image}">
-        
-        <label>Description</label>
-        <input class="edit-description" value="${p.description}">
-
-        <label>Category</label>
-        <input class="edit-category" value="${p.category}">
-
-        <label>Link</label>
-        <input class="edit-link" value="${p.link}">
-
-        <button class="update-btn">Update</button>
-        <button class="delete-btn">Delete</button>
-        <hr>
-      `;
-
-      /* UPDATE PRODUCT */
-      div.querySelector(".update-btn").onclick = async () => {
-        await updateDoc(doc(db, "products", item.id), {
-          price: div.querySelector(".edit-price").value,
-          image: div.querySelector(".edit-image").value,
-          description: div.querySelector(".edit-description").value,
-          category: div.querySelector(".edit-category").value,
-          link: div.querySelector(".edit-link").value
-        });
-
-        alert("Product updated!");
-      };
-
-      /* DELETE PRODUCT */
-      div.querySelector(".delete-btn").onclick = async () => {
-        if (confirm("Delete product?")) {
-          await deleteDoc(doc(db, "products", item.id));
-          loadProducts();
-        }
-      };
-
-      productList.appendChild(div);
-    });
-  }
-
-  /* === ADD PRODUCT === */
-  document.getElementById("addProduct").onclick = async () => {
-    const newProduct = {
-      name: document.getElementById("name").value,
-      price: document.getElementById("price").value,
-      description: document.getElementById("description").value,
-      image: document.getElementById("image").value,
-      category: document.getElementById("category").value,
-      link: document.getElementById("link").value
-    };
-
-    await addDoc(collection(db, "products"), newProduct);
-    alert("Product added!");
-    loadProducts();
-  };
-
-  /* === LOAD ORDERS === */
-  async function loadOrders() {
-    ordersContainer.innerHTML = `
-      <section class="admin-box">
-        <h2>Kliendi Tellimused</h2>
-        <div id="orderList">Loading...</div>
-      </section>
+/* products */
+async function loadProducts(){
+  productList.innerHTML = "";
+  const snaps = await getDocs(collection(db, "products"));
+  snaps.forEach(item=>{
+    const p = item.data();
+    const div = document.createElement("div");
+    div.className = "product-item";
+    div.innerHTML = `
+      <h3>${p.name}</h3>
+      <img src="${p.image}" width="150" />
+      <label>Price</label><input class="edit-price" value="${p.price}" />
+      <label>Image</label><input class="edit-image" value="${p.image}" />
+      <label>Description</label><input class="edit-description" value="${p.description}" />
+      <label>Category</label><input class="edit-category" value="${p.category}" />
+      <label>Link</label><input class="edit-link" value="${p.link}" />
+      <button class="update-btn">Update</button>
+      <button class="delete-btn">Delete</button>
+      <hr>
     `;
+    div.querySelector(".update-btn").onclick = async ()=>{
+      const id = item.id;
+      await updateDoc(doc(db, "products", id), {
+        price: div.querySelector(".edit-price").value,
+        image: div.querySelector(".edit-image").value,
+        description: div.querySelector(".edit-description").value,
+        category: div.querySelector(".edit-category").value,
+        link: div.querySelector(".edit-link").value
+      });
+      alert("Product updated!");
+    };
+    div.querySelector(".delete-btn").onclick = async ()=>{
+      if (!confirm("Delete product?")) return;
+      await deleteDoc(doc(db, "products", item.id));
+      loadProducts();
+    };
+    productList.appendChild(div);
+  });
+}
 
-    const orderListDiv = document.getElementById("orderList");
+document.getElementById("addProduct").onclick = async ()=>{
+  const newP = {
+    name: document.getElementById("name").value,
+    price: document.getElementById("price").value,
+    description: document.getElementById("description").value,
+    image: document.getElementById("image").value,
+    category: document.getElementById("category").value,
+    link: document.getElementById("link").value
+  };
+  await addDoc(collection(db, "products"), newP);
+  alert("Product added!");
+  loadProducts();
+};
 
-    const snapshot = await getDocs(collection(db, "orders"));
-    orderListDiv.innerHTML = "";
-
-    if (snapshot.empty) {
-      orderListDiv.innerHTML = "<p>Tellimusi ei ole.</p>";
-      return;
-    }
-
-    snapshot.forEach(docSnap => {
-      const order = docSnap.data();
-
+/* orders */
+async function loadOrders(){
+  ordersList.innerHTML = "";
+  try {
+    const q = query(collection(db, "orders"), orderBy("createdAt","desc"));
+    const snaps = await getDocs(q);
+    if (snaps.empty) { ordersList.innerHTML = "<p>Tellimusi pole.</p>"; return; }
+    snaps.forEach(docSnap=>{
+      const d = docSnap.data();
+      const id = docSnap.id;
       const div = document.createElement("div");
-      div.classList.add("order-item");
-
-      div.innerHTML = `
-        <h3>Tellimus</h3>
-        <p><strong>Email:</strong> ${order.email}</p>
-        <p><strong>Aeg:</strong> ${order.timestamp}</p>
-        <p><strong>Tooted:</strong></p>
-        <ul>
-          ${order.items.map(item => `<li>${item.name} — ${item.price}</li>`).join("")}
-        </ul>
-        <button class="cancel-order">Tühista tellimus</button>
-        <hr>
-      `;
-
-      div.querySelector(".cancel-order").onclick = async () => {
-        if (confirm("Kas soovid tellimuse tühistada?")) {
-          await deleteDoc(doc(db, "orders", docSnap.id));
-          loadOrders();
-        }
+      div.className = "order-item";
+      const when = d.createdAt && d.createdAt.toDate ? d.createdAt.toDate().toLocaleString() : "—";
+      div.innerHTML = `<h3>Tellimus: ${id}</h3>
+        <p><strong>Aeg:</strong> ${when}</p>
+        <p><strong>Email:</strong> ${d.email||'—'}</p>
+        <p><strong>Status:</strong> ${d.status||'—'}</p>
+        <div class="order-products"></div>
+        <div style="margin-top:8px;">
+          <button class="cancel-order">Tühista tellimus</button>
+        </div>
+        <hr>`;
+      const productsDiv = div.querySelector(".order-products");
+      if (Array.isArray(d.products)) {
+        d.products.forEach(p=>{
+          const pEl = document.createElement("div");
+          pEl.innerText = `${p.name} — ${Number(p.price||0).toFixed(2)}€ x ${p.qty}`;
+          productsDiv.appendChild(pEl);
+        });
+      } else productsDiv.innerText = "Tooteid pole.";
+      div.querySelector(".cancel-order").onclick = async ()=>{
+        if (!confirm("Tõesti tühistada tellimus?")) return;
+        await updateDoc(doc(db, "orders", id), { status: "cancelled" });
+        loadOrders();
       };
-
-      orderListDiv.appendChild(div);
+      ordersList.appendChild(div);
     });
+  } catch (err) {
+    console.error("Load orders error:", err);
+    ordersList.innerHTML = "<p>Tellimuste laadimisel tekkis viga.</p>";
   }
+}
 </script>
-
 </body>
 </html>
