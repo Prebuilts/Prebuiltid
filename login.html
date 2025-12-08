@@ -47,19 +47,19 @@
 
     document.getElementById("googleSign").onclick = async () => {
       const provider = new GoogleAuthProvider();
-      try { await signInWithPopup(auth, provider); window.location.href = "store.html"; } catch (e) { console.error(e); alert("Login failed"); }
+      try { await signInWithPopup(auth, provider); window.location.href = "Store.html"; } catch (e) { console.error(e); alert("Login failed"); }
     };
 
     document.getElementById("loginBtn").onclick = async () => {
       const email = document.getElementById("email").value;
       const pw = document.getElementById("password").value;
-      try { await signInWithEmailAndPassword(auth, email, pw); window.location.href = "store.html"; } catch(e){ console.error(e); alert("Login failed"); }
+      try { await signInWithEmailAndPassword(auth, email, pw); window.location.href = "Store.html"; } catch(e){ console.error(e); alert("Login failed"); }
     };
 
     document.getElementById("signupBtn").onclick = async () => {
       const email = document.getElementById("email").value;
       const pw = document.getElementById("password").value;
-      try { await createUserWithEmailAndPassword(auth, email, pw); window.location.href = "store.html"; } catch(e){ console.error(e); alert("Signup failed"); }
+      try { await createUserWithEmailAndPassword(auth, email, pw); window.location.href = "Store.html"; } catch(e){ console.error(e); alert("Signup failed"); }
     };
   </script>
 </body>
