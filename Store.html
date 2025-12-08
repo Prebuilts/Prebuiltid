@@ -52,22 +52,42 @@
 </section>
 
 <!-- Floating Cart Button -->
-<div id="cart-icon">
+<div id="cart-icon" title="Vaata ostukorvi">
     🛒 <span id="cart-count">0</span>
 </div>
 
 <!-- Slide-out Basket Panel -->
-<div id="basket-panel">
+<div id="basket-panel" aria-hidden="true">
     <div id="basket-header">
         <h2>Ostukorv</h2>
-        <button id="close-basket">✖</button>
+        <button id="close-basket" aria-label="Sulge ostukorv">✖</button>
     </div>
 
     <div id="basket-items"></div>
 
     <div id="basket-footer">
         <h3>Kokku: <span id="basket-total">0€</span></h3>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+            <button id="clear-cart-btn">Tühjenda</button>
+            <button id="buy-all-btn">Osta kõik</button>
+        </div>
     </div>
+</div>
+
+<!-- Checkout Confirmation Modal -->
+<div id="checkout-modal" class="modal" aria-hidden="true">
+  <div class="modal-content">
+    <h3>Oled sa kindel?</h3>
+    <p id="checkout-message">Palun sisesta oma e-post — me võtame teiega ühendust 1-5 tööpäeva jooksul. Makse toimub kohapeal.</p>
+
+    <label for="checkout-email">E-post:</label>
+    <input id="checkout-email" type="email" placeholder="meie@e-post.ee">
+
+    <div style="margin-top:12px; display:flex; gap:10px; justify-content:flex-end;">
+      <button id="cancel-checkout">Tühista</button>
+      <button id="confirm-checkout">Kinnita ostu</button>
+    </div>
+  </div>
 </div>
 
 <footer id="footer">
