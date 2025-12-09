@@ -1,67 +1,9 @@
-/* BODY */
-body {
-  background-color: #F4F4F9;
-  font-family: Arial, sans-serif;
-  margin: 0;
-}
-
-/* HEADER */
-#header {
-  background-color: #2C3E50;
-  padding: 20px;
-  text-align: center;
-  border-bottom: 5px solid #34495E;
-}
-
-#header h1 {
-  color: #D1D8E0;
-  margin: 0;
-}
-
-/* LOGIN BOX */
-#loginBox {
-  max-width: 400px;
-  margin: 70px auto;
-  padding: 30px;
-  background-color: #F1F3F5;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 8px;
-}
-
-input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 6px;
-  border: 1px solid #CCC;
-  margin-bottom: 15px;
-}
-
-button {
-  width: 100%;
-  background-color: #FF6F61;
-  border: none;
-  color: white;
-  padding: 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 15px;
-}
-
-button:hover {
-  background-color: #FF5733;
-}
-
-/* FOOTER */
-#footer {
-  text-align: center;
-  padding: 20px;
-  background-color: #2C3E50;
-  color: #D1D8E0;
-  margin-top: 50px;
-}
+/* login.css - styled login page matching theme */
+body { background:#F4F4F9; font-family:Arial; margin:0; color:#333; }
+#header { display:flex; align-items:center; padding:15px 20px; background:#2C3E50; border-bottom:5px solid #34495E; }
+#HIcon{ max-width:60px; margin-right:8px; } #HH1{ color:#D1D8E0; margin:0; font-size:1.2rem; }
+.login-container { max-width:420px; margin:70px auto; background:#F1F3F5; padding:22px; border-radius:10px; box-shadow:0 6px 20px rgba(0,0,0,0.08); }
+input, textarea, select { width:100%; padding:10px; margin-top:8px; border-radius:8px; border:1px solid #d0d7df; box-sizing:border-box; }
+button { background:#FF6F61; color:#fff; border:none; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:700; }
+button:hover { background:#FF5733; }
+a{ color:#FF6F61; text-decoration:none; }
