@@ -6,15 +6,6 @@
   <title>Prebuiltid | Pood</title>
   <link rel="stylesheet" href="store.css" />
 </head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-YS1Q1904H6"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-YS1Q1904H6');
-</script>
 <body>
 
 <header id="header">
@@ -71,7 +62,6 @@
     <input id="searchInput" placeholder="Otsi toote nime järgi" style="padding:8px;border-radius:6px;border:1px solid #d0d7df;">
   </div>
 
-  <!-- RESTORED CORRECT CLASS FOR 3×3 GRID -->
   <div id="shopgrid"></div>
 
 </section>
@@ -107,9 +97,44 @@
     <h3>Oled sa kindel?</h3>
     <p>Me kontakteerume 1–5 tööpäeva jooksul.</p>
 
-    <div style="text-align:right;margin-top:10px;">
+    <div style="text-align:left;margin-top:12px;">
+      <p>Vali makseviis:</p>
+      <div style="display:flex;gap:10px;">
+        <button id="pay-cash-btn">Kohapeal / Pangaülekanne</button>
+        <button id="pay-crypto-open-btn">Crypto</button>
+      </div>
+    </div>
+
+    <div style="text-align:right;margin-top:12px;">
       <button id="cancel-checkout">Tühista</button>
-      <button id="confirm-checkout">Kinnita ost</button>
+      <button id="confirm-checkout">Kinnita ost (tavaline)</button>
+    </div>
+  </div>
+</div>
+
+<!-- Crypto Payment Popup -->
+<div id="crypto-modal" class="modal">
+  <div class="modal-content">
+    <h2>Crypto Payment</h2>
+    <p>Vali valuuta:</p>
+
+    <select id="crypto-select" style="width:100%;padding:8px;border-radius:6px;border:1px solid #d0d7df;">
+      <option value="xmr">Monero (XMR)</option>
+      <option value="usdc">USDC (ERC-20)</option>
+    </select>
+
+    <div id="crypto-info" style="margin-top:15px;">
+      <p><strong>Summa (EUR):</strong> <span id="crypto-eur-amount">...</span></p>
+      <p><strong>Summa (crypto + 3%):</strong> <span id="crypto-amount">...</span></p>
+      <p><strong>Aadress:</strong></p>
+      <p id="crypto-address">Loading...</p>
+
+      <img id="crypto-qr" src="" style="width:220px;margin-top:10px;border-radius:10px;border:1px solid #eee;">
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end;">
+      <button id="confirm-paid-btn">I've Paid</button>
+      <button id="close-crypto-btn" style="background:#888;">Cancel</button>
     </div>
   </div>
 </div>
