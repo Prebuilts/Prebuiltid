@@ -1,59 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin Dashboard | Prebuiltid</title>
-  <link rel="stylesheet" href="admin.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Admin Dashboard | Prebuiltid</title>
+<link rel="stylesheet" href="admin.css">
 </head>
 <body>
 
+
 <header class="admin-header">
-  <h1>Admin Dashboard</h1>
-  <p>Manage store products</p>
+<h1>Admin Dashboard</h1>
+<p>Manage store products</p>
 </header>
+
 
 <div id="status" class="status-box">Checking admin permissions...</div>
 
-<!-- Add Product -->
+
 <section class="admin-box">
-  <h2>Add Product</h2>
+<h2>Add Product</h2>
 
-  <label for="name">Product Name</label>
-  <input id="name" placeholder="Product Name" type="text">
 
-  <label for="price">Price (number, ex: 199.99)</label>
-  <input id="price" placeholder="199.99" type="number" step="0.01" min="0">
+<label for="name">Product Name</label>
+<input id="name" placeholder="Product Name" type="text">
 
-  <label for="description">Description</label>
-  <textarea id="description" placeholder="Description"></textarea>
 
-  <label for="image">Image URL (direct link)</label>
-  <input id="image" placeholder="https://.../image.jpg" type="text">
+<label for="price">Price</label>
+<input id="price" placeholder="199.99" type="number" step="0.01" min="0">
 
-  <label for="category">Category</label>
-  <input id="category" placeholder="Category" type="text">
 
-  <label for="link">Product Link (optional)</label>
-  <input id="link" placeholder="https://..." type="text">
+<label for="description">Description</label>
+<textarea id="description" placeholder="Description"></textarea>
 
-  <label for="quantity">Quantity (number)</label>
-  <input id="quantity" placeholder="10" type="number" step="1" min="0">
 
-  <label for="paymentButton">NOWPayments Button HTML or URL (optional)</label>
-  <textarea id="paymentButton" placeholder='Paste the NOWPayments embed HTML OR just a NOWPayments URL (https://nowpayments.io/payment/?iid=...)'></textarea>
-  <div class="note">Paste full &lt;a&gt; embed or just the URL — admin UI will store exactly what you provide.</div>
+<label for="image">Image URL</label>
+<input id="image" placeholder="https://.../image.jpg" type="text">
 
-  <div style="margin-top:10px;">
-    <button id="addProduct">Add Product</button>
-  </div>
+
+<label for="category">Category</label>
+<input id="category" placeholder="Category" type="text">
+
+
+<label for="link">Product Link (optional)</label>
+<input id="link" placeholder="https://..." type="text">
+
+
+<label for="quantity">Quantity</label>
+<input id="quantity" placeholder="10" type="number" min="0" step="1">
+
+
+<label for="paymentButton">NOWPayments Button HTML / URL</label>
+<textarea id="paymentButton" placeholder="Paste embed HTML or NP URL"></textarea>
+
+
+<button id="addProduct">Add Product</button>
 </section>
 
-<!-- Product List -->
+
 <section class="admin-box">
-  <h2>Existing Products</h2>
-  <div id="productList">Loading products...</div>
+<h2>Existing Products</h2>
+<div id="productList">Loading products...</div>
 </section>
+
 
 <script type="module" src="admin.js"></script>
 </body>
