@@ -68,18 +68,18 @@
 </section>
 
 <!-- Floating Cart Button -->
-<div id="cart-icon" title="Vaata ostukorvi">
+<div id="cart-icon" title="Vaata ostukorvi" aria-label="Ostukorv">
   🛒 <span id="cart-count">0</span>
 </div>
 
-<!-- Slide-out Basket Panel -->
-<div id="basket-panel" aria-hidden="true">
+<!-- Slide-out Basket Panel (kept off-screen until opened) -->
+<div id="basket-panel" aria-hidden="true" role="dialog" aria-label="Ostukorv">
   <div id="basket-header">
     <h2>Ostukorv</h2>
     <button id="close-basket" aria-label="Sulge ostukorv">✖</button>
   </div>
 
-  <div id="basket-items"></div>
+  <div id="basket-items" aria-live="polite"></div>
 
   <div id="basket-footer">
     <h3>Kokku: <span id="basket-total">0€</span></h3>
@@ -89,6 +89,22 @@
     </div>
     <div style="margin-top:10px;">
       <button id="my-orders-btn">Minu tellimused</button>
+    </div>
+  </div>
+</div>
+
+<!-- DISCLAIMER MODAL (shows before basket on cart click unless accepted) -->
+<div id="disclaimer-modal" class="modal" aria-hidden="true" role="alertdialog" aria-labelledby="disclaimer-title">
+  <div class="modal-content">
+    <h2 id="disclaimer-title">Oluline teade</h2>
+    <p style="font-weight:700; margin-top:8px;">
+      Palun sisestage NowPayments-i makseterminali oma email või telefoninumber,
+      et saaksime teiega ühendust võtta, et panna pakk teele või anda teile teada kuhu toodetele järgi tulla!
+    </p>
+
+    <div style="margin-top:16px; display:flex; gap:10px; justify-content:flex-end;">
+      <button id="disclaimer-cancel" style="background:#bbb;">Tühista</button>
+      <button id="disclaimer-accept">Olen teadlik ja saan aru</button>
     </div>
   </div>
 </div>
@@ -106,7 +122,7 @@
   </div>
 </div>
 
-<!-- Crypto modal (kept for compatibility; buttons are provided inside basket per product) -->
+<!-- Crypto modal (kept for compatibility; payments shown per product inside basket) -->
 <div id="crypto-modal" class="modal" aria-hidden="true">
   <div class="modal-content">
     <h3>Krüpto</h3>
